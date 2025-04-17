@@ -1,29 +1,23 @@
 # StudyMate
 
 ## Project Overview
-StudyMate is a web application designed to help users efficiently track their study habits. 
+StudyMate is a web application designed to help users efficiently track their study habits. The application allows users to log their study sessions, visualize their progress, and share insights with peers.
 
-## Features
-- Upload study data
-- Visualize progress
-- Share insights with peers
+## Core Technologies
+- **Frontend**: HTML, CSS (Bootstrap), JavaScript, jQuery
+- **Backend**: Flask (with SQLAlchemy)
+- **Database**: SQLite
 
-## Technologies Used
-- HTML
-- CSS (Bootstrap)
-- JavaScript
-- Flask
-- SQLAlchemy
-- Chart.js
+## Group Members
+| UWA ID    | Name                | 
+|-----------|---------------------|
+| UWA-24501549  | Abdulla Al Masud |
+| UWA-24358018  | Yuyan Yang       |
+| UWA-24090791  | Xingyue Wang     | 
+| UWA-23932642  | Yingqi Liu       | 
 
-## Installation
-Instructions on how to set up the project locally.
-
-## Usage
-How to use the application.
-
-## Contributing
-Guidelines for contributing to the project.
-
-## License
-Information about the license if applicable.
+## Instructions to Launch the Application
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/abdullah-masud/study-mate.git
+   cd study-mate
