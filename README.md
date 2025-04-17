@@ -11,10 +11,10 @@ StudyMate is a web application designed to help users efficiently track their st
 ## Group Members
 | UWA ID    | Name                | 
 |-----------|---------------------|
-| UWA-24501549  | Abdulla Al Masud |
-| UWA-24358018  | Yuyan Yang       |
-| UWA-24090791  | Xingyue Wang     | 
-| UWA-23932642  | Yingqi Liu       | 
+| 24501549  | Abdulla Al Masud |
+| 24358018  | Yuyan Yang       |
+| 24090791  | Xingyue Wang     | 
+| 23932642  | Yingqi Liu       | 
 
 ## Instructions to Launch the Application
 1. **Clone the Repository**:
