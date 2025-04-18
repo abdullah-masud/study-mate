@@ -21,7 +21,7 @@
 | 24501549 | Abdulla Al Masud | `abdullah-masud`       |
 | 24358018 | Yuyan Yang       | `Yuyan0701`            |
 | 24090791 | Xingyue Wang     | `KelseyOnGit`         |
-| 23932642 | Yingqi Liu       | `yingqi-liu`           |
+| 23932642 | Yingqi Liu       | `SexyZoe`           |
 
 ---
 
