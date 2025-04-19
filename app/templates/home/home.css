@@ -49,12 +49,19 @@
     position: relative;
   }
   
-  .navbar {
+.navbar {
     padding: 20px 5%;
-    background-color: white;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-  }
-  
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar:hover {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
   .navbar-brand {
     font-size: 1.8rem;
     font-weight: 700;
