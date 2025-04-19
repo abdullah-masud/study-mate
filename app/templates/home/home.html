@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>StudyMate - Home</title>
         <!-- Favicon Links -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/app/templates/static/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/app/templates/static/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/app/templates/static/favicon-16x16.png">
-    <link rel="manifest" href="/static/site.webmanifest">
-    <link rel="shortcut icon" href="/app/templates/static/favicon.ico">
-    
+        <link rel="icon" href="static/favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="home.css"> <!-- Link to external CSS -->
 </head>
@@ -25,7 +23,9 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container">
                     <!-- Brand -->
-                    <a class="navbar-brand" href="#">StudyMate</a>
+                    <a class="navbar-brand" href="#">
+                        <img src="static/images/logo.png" alt="StudyMate" class="navbar-logo">
+                    </a>
                     <!-- Toggler -->
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>

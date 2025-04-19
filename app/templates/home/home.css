@@ -14,6 +14,7 @@
     overflow-x: hidden;
   }
   
+  
   /* Background shapes with subtle animation */
   .background-shape {
     position: absolute;
@@ -22,7 +23,7 @@
     background: rgba(116, 204, 252, 0.1);
     border-radius: 50%;
     z-index: -1;
-    filter: blur(30px);
+    filter: blur(60px);
     animation: float 15s infinite alternate ease-in-out;
   }
   
@@ -49,8 +50,8 @@
     position: relative;
   }
   
-.navbar {
-    padding: 20px 5%;
+  .navbar {
+    padding: 5px 5%;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border-bottom: 2px solid var(--accent);
     position: sticky;
@@ -58,8 +59,16 @@
     z-index: 1000;
     transition: all 0.3s ease-in-out;
 }
+    /* Add to home.css */
+    .navbar-logo {
+    width: 100px;
+    height: auto;
+    margin-right: 20px;
+    max-width: 180px; /* Prevent overflow */
+    
+  }
 
-.navbar:hover {
+  .navbar:hover {
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
 }
   .navbar-brand {

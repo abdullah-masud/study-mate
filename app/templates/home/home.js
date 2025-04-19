@@ -1,3 +1,5 @@
+
+// Handles the animation of feature cards when they come into view
 document.addEventListener('DOMContentLoaded', function() {
     const featureCards = document.querySelectorAll('.feature-card');
     
