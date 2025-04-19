@@ -4,56 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyMate - Home</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
+    <link rel="stylesheet" href="home.css"> <!-- Link to external CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+    <!-- Section 1: Hero -->
+    <section class="hero">
+        <!-- Header - Menu -->
+        <header class="header">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container">
+                    <!-- Brand -->
+                    <a class="navbar-brand" href="#">StudyMate</a>
+                    <!-- Toggler -->
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <!-- Collapse -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ml-auto">
+                            <!-- Home Link -->
+                            <li class="nav-item active">
+                                <!-- Navigation Links -->
+                                <a class="nav-link" href="#">Home</a>
+                            </li>
+                            <!-- About Link -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">About</a>
+                            </li>
+                            <!-- Contact Link -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Contact</a>
+                            </li>
+                        </ul>
+                        <!-- Call-to-Action Button -->
+                        <a href="/signup" class="btn btn-primary">
+                            Get Started - It's Free
+                        </a>
+                    
+                    </div>
+            </nav>
+        </header>
+    </section>
 
-    <!-- Header - Menu -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Main Content Section -->
+        <main class="main-content">
             <div class="container">
-                <!-- Brand -->
-                <a class="navbar-brand" href="#">StudyMate</a>
-                <!-- Toggler -->
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
-                        </li>
-                    </ul>
-                    <a href="main.html" class="btn btn-primary ml-lg-3">Try now</a>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Main Content Section -->
-    <main class="main-content">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h1 class="main-heading">Manage Your Study Efficiently</h1>
-                    <p class="main-content">With StudyMate, you can keep all your learning information in one spot, allowing you to concentrate on mastering the material instead of organizing data.</p>
-                    <div class="button-group">
-                        <a href="main.html" class="btn btn-primary">Get Started</a>
-                        <a href="#" class="btn btn-secondary">Learn More</a>
+                <div class="row align-items-center">
+                    <!-- Text Content Section -->
+                    <div class="col-md-6">
+                        <h1 class="main-heading">Manage Your Study Efficiently</h1>
+                        <p class="main-content">With StudyMate, you can keep all your learning information in one spot, allowing you to concentrate on mastering the material instead of organizing data.</p>
+                        <!-- Buttons for user actions -->
+                        <div class="button-group">
+                            <a href="main.html" class="btn btn-primary">Get Started</a> <!-- Redirects to main page -->
+                            <a href="#" class="btn btn-secondary">Learn More</a> <!-- Placeholder for additional information -->
+                        </div>
+                    </div>
+                    <!-- Image Section -->
+                    <div class="col-md-6">
+                        <img src="dashboard-image.png" alt="Dashboard Preview" class="img-fluid"> <!-- Dashboard preview image -->
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <img src="dashboard-image.png" alt="Dashboard Preview" class="img-fluid">
+            </div>
+        </main>
+    <!-- Section 2: Key Features -->
+    <section class="features">
+        <div class="container">
+            <h2 class="text-center mb-5">Powerful Features</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Progress Tracking</h3>
+                        <p>Visualize your study habits with detailed analytics and progress reports.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3>Smart Reminders</h3>
+                        <p>Never miss a study session with personalized notifications.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3>Achievement System</h3>
+                        <p>Earn rewards and stay motivated with our gamified learning experience.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
+    </section>
 
     <!-- Footer -->
     <footer>
