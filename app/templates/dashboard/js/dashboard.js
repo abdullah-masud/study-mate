@@ -1,5 +1,6 @@
 // script.js
 
+
 document.getElementById("submit-btn").addEventListener("click", function () {
   const date = document.getElementById("date").value;
   const subject = document.getElementById("subject").value;
@@ -17,3 +18,5 @@ document.getElementById("submit-btn").addEventListener("click", function () {
   document.getElementById("subject").value = "";
   document.getElementById("hours").value = "";
 });
+
+
