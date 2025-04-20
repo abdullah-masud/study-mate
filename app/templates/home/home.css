@@ -17,26 +17,31 @@
   
   /* Background shapes with subtle animation */
   .background-shape {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background: rgba(116, 204, 252, 0.1);
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, 
+             rgba(116, 204, 252, 0.25) 0%, 
+             rgba(74, 62, 255, 0.2) 100%); 
     border-radius: 50%;
     z-index: -1;
-    filter: blur(60px);
+    filter: blur(40px);
     animation: float 15s infinite alternate ease-in-out;
+    opacity: 0.8;
   }
   
   .background-shape.left {
-    left: -150px;
+    left: -100px;
     top: 20%;
     animation-delay: 0s;
+    transform-origin: 30% 70%;
   }
   
   .background-shape.right {
-    right: -150px;
-    bottom: 20%;
+    right: -100px;
+    bottom: 30%;
     animation-delay: 2s;
+    transform-origin: 70% 30%;
   }
   
   @keyframes float {
@@ -49,7 +54,36 @@
     margin-bottom: 40px;
     position: relative;
   }
+
+  /* Enhanced Background Shapes */
+.background-shape {
+    position: fixed;  
+    height: 400px;
+    background: linear-gradient(135deg, 
+             rgba(116, 204, 252, 0.25) 0%, 
+             rgba(74, 62, 255, 0.2) 100%);
+    border-radius: 50%;
+    z-index: -1; /* Keep behind all content */
+    filter: blur(40px);
+    animation: float 15s infinite alternate ease-in-out;
+    opacity: 0.8;
+  }
   
+  .background-shape.left {
+    left: -100px;
+    top: 20%;
+    animation-delay: 0s;
+    transform-origin: 30% 70%;
+  }
+  
+  .background-shape.right {
+    right: -100px;
+    bottom: 30%;
+    animation-delay: 2s;
+    transform-origin: 70% 30%;
+  }
+  
+  /* Style the navbar */
   .navbar {
     padding: 5px 5%;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -59,7 +93,6 @@
     z-index: 1000;
     transition: all 0.3s ease-in-out;
 }
-    /* Add to home.css */
     .navbar-logo {
     width: 100px;
     height: auto;
@@ -67,7 +100,6 @@
     max-width: 180px; /* Prevent overflow */
     
   }
-
   .navbar:hover {
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
 }
