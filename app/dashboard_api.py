@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.models import db, StudySession
 from collections import defaultdict
 from datetime import datetime
-
+from datetime import timedelta
 
 # 创建蓝图：用于学习记录相关 API
 dashboard_api = Blueprint('dashboard_api', __name__)
@@ -14,17 +14,29 @@ def add_session():
     date = data.get('date')
     subject = data.get('subject')
     hours = data.get('hours')
+    color = data.get('color')
 
-    # 检查字段是否完整
-    if not all([date, subject, isinstance(hours, int)]):
-        return jsonify({"error": "Invalid data"}), 400
+    # 基本校验
+    if not date or not subject or not isinstance(hours, int):
+        return jsonify({"error": "Invalid input data format."}), 400
 
-    # 创建记录并写入数据库
-    session = StudySession(date=date, subject=subject, hours=hours)
+    if hours <= 0 or hours > 24:
+        return jsonify({"error": "Hours must be between 1 and 24."}), 400
+
+    # 查询当天已有记录
+    existing_sessions = StudySession.query.filter_by(date=date).all()
+    total_hours = sum(s.hours for s in existing_sessions)
+
+    if total_hours + hours > 24:
+        return jsonify({"error": f"Total study time for {date} exceeds 24 hours."}), 400
+
+    # ✅ 插入数据
+    session = StudySession(date=date, subject=subject, hours=hours, color=color)
     db.session.add(session)
     db.session.commit()
 
     return jsonify({"message": "Session added successfully!"}), 200
+
 
 # 路由 2：返回统计信息
 @dashboard_api.route('/api/get-summary', methods=['GET'])
@@ -58,13 +70,12 @@ def get_records():
             "id": s.id,  
             "date": s.date,
             "subject": s.subject,
-            "hours": s.hours
+            "hours": s.hours,
+            "color": s.color  # ✅ 加上 color 字段
         }
         for s in sessions
     ]
     return jsonify(records)
-
-
 
 # 路由 4：删除学习记录
 @dashboard_api.route('/api/delete-session/<int:session_id>', methods=['DELETE'])
@@ -79,16 +90,48 @@ def delete_session(session_id):
 # 路由 5：按周返回学习记录
 @dashboard_api.route('/api/productivity-by-day', methods=['GET'])
 def productivity_by_day():
-    sessions = StudySession.query.all()
-    day_totals = {day: 0 for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]}
+    start_str = request.args.get("start")
+    try:
+        if start_str:
+            start_date = datetime.strptime(start_str, "%Y-%m-%d").date()
+        else:
+            start_date = datetime.today().date()
+    except Exception as e:
+        return jsonify({"error": "Invalid date format."}), 400
+
+    end_date = start_date + timedelta(days=6)
+
+    sessions = StudySession.query.filter(
+        StudySession.date >= start_date,
+        StudySession.date <= end_date
+    ).all()
+
+    data = defaultdict(lambda: defaultdict(lambda: {"hours": 0, "color": "#999"}))
 
     for s in sessions:
-        try:
-            weekday = datetime.strptime(s.date, '%Y-%m-%d').strftime('%A')
-            day_totals[weekday] += s.hours
-        except Exception as e:
-            print("⚠️ 日期转换失败：", s.date, e)
+        subj = s.subject.lower()
+        data[s.date][subj]["hours"] += s.hours
+        if s.color:
+            data[s.date][subj]["color"] = s.color
 
-    return jsonify(day_totals)
+    sorted_data = dict(sorted(data.items()))
+    return jsonify(sorted_data)
+
+
+# ✅ 路由 6：更新颜色字段
+@dashboard_api.route('/api/update-color-subject/<subject>', methods=['PUT'])
+def update_color_by_subject(subject):
+    data = request.get_json()
+    new_color = data.get("color")
+    if not new_color:
+        return jsonify({"error": "No color provided"}), 400
+
+    sessions = StudySession.query.filter_by(subject=subject).all()
+    for session in sessions:
+        session.color = new_color
+
+    db.session.commit()
+    return jsonify({"message": f"All {subject} colors updated!"}), 200
+
 
 

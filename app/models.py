@@ -9,6 +9,7 @@ class StudySession(db.Model):
     date = db.Column(db.String(20), nullable=False)  # 学习日期，字符串格式
     subject = db.Column(db.String(100), nullable=False)  # 学习科目
     hours = db.Column(db.Integer, nullable=False)  # 学习小时数
+    color = db.Column(db.String(20), default="#888888")  # 🟡 新增：记录颜色值（如 #36a2eb）
 
     def __repr__(self):
         # 调试时使用的字符串表示形式
