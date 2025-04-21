@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <title>StudyMate Dashboard</title>
+
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <!-- 自定义 CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard/css/dashboard.css') }}">
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- 顶部导航 -->
+  <header class="text-white p-4 shadow-md" style="background-color: rgb(11, 6, 120);">
+    <h1 class="text-2xl font-bold flex items-center space-x-3">
+      <img 
+  src="{{ url_for('static', filename='dashboard/image/studymate.jpg') }}" 
+  alt="StudyMate Logo"
+  style="width: 80px; height: 80px;"
+  class="rounded-lg opacity-0 animate-fade-in"
+/>
+
+      <span>StudyMate Dashboard</span>
+    </h1>
+  </header>
+
+  <div class="flex min-h-screen">
+    <!-- 左侧用户信息栏 -->
+    <aside class="w-64 bg-white shadow-md p-6">
+      <h2 class="text-lg font-semibold mb-4">👤 User Info</h2>
+      <p class="text-gray-700">Name: <span class="font-bold">John Doe</span></p>
+    </aside>
+
+    <!-- 主体内容 -->
+    <div class="flex-1">
+      <main class="max-w-5xl mx-auto p-6 space-y-8">
+        <!-- 表单 -->
+        <section class="bg-white rounded-xl shadow p-6">
+          <h2 class="text-xl font-semibold mb-4">Add Study Session</h2>
+          <form id="study-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input type="date" id="date" class="border p-2 rounded" placeholder="Date" />
+            <input type="text" id="subject" class="border p-2 rounded" placeholder="Subject" />
+            <input type="number" id="hours" class="border p-2 rounded" placeholder="Hours" />
+          </form>
+          <button id="submit-btn" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+            Submit
+          </button>
+        </section>
+
+        <!-- 卡片统计 -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-blue-100 p-4 rounded shadow text-center">
+            <p class="text-lg">Total Hours</p>
+            <p id="total-hours" class="text-2xl font-bold">0</p>
+          </div>
+          <div class="bg-green-100 p-4 rounded shadow text-center">
+            <p class="text-lg">Most Studied</p>
+            <p id="most-subject" class="text-2xl font-bold">-</p>
+          </div>
+          <div class="bg-red-100 p-4 rounded shadow text-center">
+            <p class="text-lg">Least Studied</p>
+            <p id="least-subject" class="text-2xl font-bold">-</p>
+          </div>
+        </section>
+
+        <!-- 图表区域 -->
+<!-- 图表区域 -->
+<section class="bg-white p-6 rounded shadow mt-8">
+  <h2 class="text-xl font-semibold mb-4">📈 Productivity by Day of the Week</h2>
+  <canvas id="productivity-chart" class="w-full h-64"></canvas>
+</section>
+
+<!-- 表格区域 -->
+<section class="bg-white p-6 rounded shadow mt-8">
+  <h2 class="text-xl font-semibold mb-4">📋 Study History</h2>
+  <table class="w-full table-auto border border-gray-300">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-2 border">Date</th>
+        <th class="p-2 border">Subject</th>
+        <th class="p-2 border">Hours</th>
+      </tr>
+    </thead>
+    <tbody id="records-table-body">
+      <!-- 学习记录将通过 JS 动态插入 -->
+    </tbody>
+  </table>
+</section>
+
+      </main>
+
+      <!-- 页脚 -->
+      <footer class="text-center text-sm text-gray-500 p-4">
+        &copy; 2025 StudyMate. All rights reserved.
+      </footer>
+    </div>
+  </div>
+
+  <!-- 自定义 JS -->
+  <script src="{{ url_for('static', filename='dashboard/js/dashboard.js') }}"></script>
+</body>
+</html>
+
+
