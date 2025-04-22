@@ -5,15 +5,62 @@
   --accent: #4a3eff;        /* Vibrant blue */
   --light: #f8f9fa;         /* Light background */
   --dark: #212529;          /* Dark text */
+  --text: #212529;
+}
+
+ /* Dark colors */
+body.dark-mode {
+  --primary: #74ccfc;
+  --secondary: #120b7f;
+  --accent: #ffffff;
+  --light: #121212;
+  --dark: #f0f0f0;
+  --text: #f1f1f1;
+  background-color: var(--light);
+  color: var(--dark);
 }
 
 body {
   /* General body settings */
   font-family: 'Segoe UI', Arial, sans-serif;
   background-color: var(--light);
+  color: var(--text);
   margin: 0;
   position: relative;
   overflow-x: hidden;
+}
+
+body.dark-mode .feature-card,
+body.dark-mode .tracker-feature,
+body.dark-mode .hover-card {
+  background: rgba(40, 40, 40, 0.98) !important;  /* 深色半透明背景 */
+  border-color: rgba(180, 200, 255, 0.12) !important;
+  color: #fff !important;                        /* 主体字体变白 */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.32);
+}
+
+body.dark-mode .feature-card h3,
+body.dark-mode .tracker-feature h5,
+body.dark-mode .feature-card p,
+body.dark-mode .tracker-feature p,
+body.dark-mode .feature-desc {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+}
+
+body.dark-mode .feature-icon,
+body.dark-mode .tracker-icon {
+  background: rgba(80, 180, 255, 0.12) !important;
+  color: #74ccfc !important;
+}
+
+/* icon hover highlight */
+body.dark-mode .feature-card:hover .feature-icon,
+body.dark-mode .hover-card:hover .icon-circle,
+body.dark-mode .tracker-feature.hover-card:hover .tracker-icon {
+  background: #74ccfc !important;
+  color: #212529 !important;
+  filter: drop-shadow(0 0 2px #4a3eff99);
 }
 
 /* Floating background elements with soft blur and animation */
@@ -168,6 +215,37 @@ body {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+}
+
+/* 小圆形暗黑模式按钮样式 */
+#toggleDarkMode {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Button hover effects */
+#toggleDarkMode:hover {
+  background-color: var(--primary);
+  transform: scale(1.1);
+}
+
+#toggleDarkMode i {
+  font-size: 1rem;
 }
 
 /* Primary button styling */

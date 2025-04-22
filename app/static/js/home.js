@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }, { threshold: 0.2 });
   fadeUps.forEach(section => fadeObserver.observe(section));
 
-  // Tracker Icon 弹入动画
+  // Tracker Icon
   const icons = document.querySelectorAll('.tracker-icon');
   const iconObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -84,5 +84,22 @@ document.addEventListener('DOMContentLoaded', function () {
       navbar.classList.remove('nav-hide');
     }
     lastScrollTop = scrollTop;
+  });
+
+  // 🌙 Dark Mode Toggle Logic
+  const toggleBtn = document.getElementById('toggleDarkMode');
+  const body = document.body;
+
+  // localStorage dark mode
+  if (localStorage.getItem('dark-mode') === 'true') {
+    body.classList.add('dark-mode');
+    toggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    toggleBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    localStorage.setItem('dark-mode', isDark);
   });
 });
