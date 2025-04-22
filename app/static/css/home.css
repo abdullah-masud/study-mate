@@ -402,7 +402,34 @@ body {
 .feature-card:hover .feature-icon {
   background: var(--secondary);
   color: white;
+  transform: scale(1.15);
+}
+
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(116, 204, 252, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  transition: all 0.3s ease;
+}
+
+.icon-circle i {
+  font-size: 1.8rem;
+  color: var(--primary);
+  transition: color 0.3s ease;
+}
+
+.hover-card:hover .icon-circle {
+  background-color: var(--secondary);
   transform: scale(1.1);
+}
+
+.hover-card:hover .icon-circle i {
+  color: white;
 }
 
 /* Card title */
@@ -723,4 +750,31 @@ body {
   scroll-behavior: smooth;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Additional Scroll-based Animations */
+
+.zoom-in {
+  animation: zoomIn 1s ease forwards;
+}
+@keyframes zoomIn {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.fade-slide {
+  animation: fadeSlideUp 1s ease forwards;
+}
+@keyframes fadeSlideUp {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.bounce {
+  animation: bounceIn 0.8s ease-out forwards;
+}
+@keyframes bounceIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
 }

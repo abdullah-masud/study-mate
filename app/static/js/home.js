@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const featureObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('animate');
+        entry.target.classList.add('animate', 'fade-in-up');
       }
     });
   }, { threshold: 0.1 });
@@ -26,11 +26,33 @@ document.addEventListener('DOMContentLoaded', function () {
   const iconObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        entry.target.classList.add('visible', 'bounce');
       }
     });
   }, { threshold: 0.2 });
   icons.forEach(icon => iconObserver.observe(icon));
+
+  // Animated heading zoom-in on scroll
+  const headings = document.querySelectorAll('.main-heading, .tracker-title');
+  const headingObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('zoom-in');
+      }
+    });
+  }, { threshold: 0.2 });
+  headings.forEach(h => headingObserver.observe(h));
+
+  // Paragraph fade and slide-up
+  const paragraphs = document.querySelectorAll('p');
+  const paragraphObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('fade-slide');
+      }
+    });
+  }, { threshold: 0.1 });
+  paragraphs.forEach(p => paragraphObserver.observe(p));
 
   // Back to Top Button
   const backToTop = document.getElementById("backToTop");
@@ -51,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.addEventListener("click", showToast);
   });
 
-  // === 🆕 Mobile-friendly: Hide navbar on scroll down, show on scroll up ===
+  // Mobile navbar hide on scroll
   let lastScrollTop = 0;
   const navbar = document.querySelector('.navbar');
   window.addEventListener('scroll', function () {
