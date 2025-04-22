@@ -217,7 +217,6 @@ body.dark-mode .tracker-feature.hover-card:hover .tracker-icon {
   overflow: hidden;
 }
 
-/* 小圆形暗黑模式按钮样式 */
 #toggleDarkMode {
   position: fixed;
   top: 20px;
