@@ -64,10 +64,11 @@
 
                         <!-- CTA + Dark Mode Button container -->
                         <div class="d-flex align-items-center ml-3">
-                            <a href="http://127.0.0.1:5500/app/templates/dashboard/dashboard.html"
-                                class="btn btn-primary mr-3">
+                            <a href="{{ url_for('dashboard_home.dashboard_home') }}" class="btn btn-primary mr-3">
                                 Get Started - It's Free
                             </a>
+
+
                             <button id="toggleDarkMode" title="Toggle Dark Mode">
                                 <i class="fas fa-moon"></i>
                             </button>

@@ -2,7 +2,7 @@ from flask import Flask
 from app.models import db
 from app.dashboard import dashboard_bp
 from app.dashboard_api import dashboard_api
-from app.routes import home_bp  # <-- add this
+from app.routes import home_bp  # Add this to import the home routes
 
 def create_app():
     app = Flask(__name__)
@@ -13,9 +13,9 @@ def create_app():
 
     db.init_app(app)
 
-    # Register all blueprints
-    app.register_blueprint(dashboard_bp)
+    # Register the blueprints
+    app.register_blueprint(home_bp)  # Home routes without prefix
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')  # Dashboard routes with '/dashboard' prefix
     app.register_blueprint(dashboard_api)
-    app.register_blueprint(home_bp)  # <-- register your home routes here
 
     return app
