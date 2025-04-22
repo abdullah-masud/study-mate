@@ -7,9 +7,9 @@
     <title>StudyMate - Home</title>
 
     <!-- Favicon Links -->
-    <link rel="icon" href="/app/static/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
 
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="/app/static/css/home.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 
 <body>
@@ -37,7 +37,7 @@
                 <div class="container">
                     <!-- Brand -->
                     <a class="navbar-brand" href="#">
-                        <img src="static/images/FullLogo_Transparent.png" alt="StudyMate"
+                        <img src="/app/static/images/FullLogo_Transparent.png" alt="StudyMate"
                             class="navbar-logo animate-logo">
                     </a>
                     <!-- Toggler -->
@@ -64,7 +64,8 @@
 
                         <!-- CTA + Dark Mode Button container -->
                         <div class="d-flex align-items-center ml-3">
-                            <a href="/signup" class="btn btn-primary mr-3">
+                            <a href="http://127.0.0.1:5500/app/templates/dashboard/dashboard.html"
+                                class="btn btn-primary mr-3">
                                 Get Started - It's Free
                             </a>
                             <button id="toggleDarkMode" title="Toggle Dark Mode">
