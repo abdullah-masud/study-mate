@@ -8,7 +8,7 @@ def create_app():
 
     # Flask 配置
     app.config['SECRET_KEY'] = 'your_secret_key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///studymate.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///studymate_yingqi.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # 初始化数据库

@@ -11,6 +11,8 @@
 
   <!-- 自定义 CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='dashboard/css/dashboard.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -39,19 +41,41 @@
       <main class="max-w-5xl mx-auto p-6 space-y-8">
         
         <!-- 表单区域 -->
-        <section class="bg-white rounded-xl shadow p-6">
-          <h2 class="text-xl font-semibold mb-4">Add Study Session</h2>
-          <form id="study-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input type="date" id="date" class="border p-2 rounded" placeholder="Date" />
-            <input type="text" id="subject" class="border p-2 rounded" placeholder="Subject" />
-            <input type="number" id="hours" class="border p-2 rounded" placeholder="Hours" />
-            <!-- ✅ 新增颜色选择器 -->
-            <input type="color" id="color" class="border p-2 rounded" value="#3b82f6" title="Pick a color" />
-          </form>
-          <button id="submit-btn" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-            Submit
+        <section class="bg-white rounded-xl shadow p-6 space-y-6">
+          <h2 class="text-xl font-semibold mb-2">➕ Add New Study Session</h2>
+        
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <input type="text" id="date" placeholder="YYYY-MM-DD"
+                     class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+        
+            <div>
+              <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+              <input type="text" id="subject" placeholder="e.g. Math, Science"
+                     class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+        
+            <div>
+              <label for="hours" class="block text-sm font-medium text-gray-700 mb-1">Hours</label>
+              <input type="number" id="hours" min="1" max="24" placeholder="Hours"
+                     class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
+        
+            <div>
+              <label for="color" class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+              <input type="color" id="color" value="#3b82f6"
+                     class="w-full border rounded-lg px-3 py-2 h-10 cursor-pointer" />
+            </div>
+          </div>
+        
+          <button id="submit-btn"
+                  class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg shadow">
+            📥 Submit Session
           </button>
         </section>
+        
 
         <!-- 卡片统计 -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -79,11 +103,28 @@
           <div class="flex items-center gap-4 mb-4">
             <button id="prev-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">⬅ last week</button>
             <span id="week-label" class="font-semibold text-lg text-blue-800 block mb-2 text-center">📅 next week</span>
-            <button id="next-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">下一周 ➡</button>
+            <button id="next-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">next week ➡</button>
           </div>
         
           <canvas id="productivity-chart" class="w-full h-64"></canvas>
         </section>
+
+        <section class="bg-white p-6 rounded shadow mt-4">
+          <h2 class="text-xl font-semibold mb-4 text-center">📊 Subject Distribution This Week</h2>
+          <!-- 周切换按钮 -->
+          <div class="flex items-center justify-center gap-4 mb-4">
+            <button id="prev-pie-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">⬅ last week</button>
+            <span id="pie-week-label" class="font-semibold text-lg text-blue-800 block text-center">📅 </span>
+            <button id="next-pie-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">next week ➡</button>
+          </div>
+          
+          <div class="flex justify-center">
+            <div class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+              <canvas id="weekly-pie-chart"></canvas>
+            </div>
+          </div>
+        </section>
+        
 
         <!-- 表格区域 -->
         <section class="bg-white p-6 rounded shadow mt-8">
