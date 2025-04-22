@@ -33,9 +33,9 @@ body {
 body.dark-mode .feature-card,
 body.dark-mode .tracker-feature,
 body.dark-mode .hover-card {
-  background: rgba(40, 40, 40, 0.98) !important;  /* 深色半透明背景 */
+  background: rgba(40, 40, 40, 0.98) !important;
   border-color: rgba(180, 200, 255, 0.12) !important;
-  color: #fff !important;                        /* 主体字体变白 */
+  color: #fff !important;                        
   box-shadow: 0 8px 32px rgba(0,0,0,0.32);
 }
 
