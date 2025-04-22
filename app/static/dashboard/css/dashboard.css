@@ -1,0 +1,58 @@
+/* dashboard.css */
+
+/* 用于圆角统一化和背景微调 */
+.rounded-xl {
+    border-radius: 1rem;
+  }
+  
+  /* 自定义按钮 hover 效果（可选） */
+  button:hover {
+    cursor: pointer;
+    opacity: 0.95;
+  }
+  
+  /* 如果图片大小没设置，这里设置默认大小 */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* 自定义底部字体样式 */
+  footer {
+    font-size: 0.85rem;
+    color: #777;
+  }
+  
+  /* 卡片类：统一内边距与阴影 */
+  .card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 背景色微调（可根据主题换） */
+  .bg-gray-100 {
+    background-color: #f7f7f7;
+  }
+  
+  .bg-white {
+    background-color: #ffffff;
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  
