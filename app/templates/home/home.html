@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>StudyMate - Home</title>
-        <!-- Favicon Links -->
-        <link rel="icon" href="/app/static/favicon.ico">
-        <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png">
-
+    <title>StudyMate - Home</title>
+    
+    <!-- Favicon Links -->
+    <link rel="icon" href="/app/static/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png">
+    
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/app/static/css/home.css"> <!-- Link to external CSS -->
+    
+    <!-- FontAwesome CDN（JSDelivr） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/app/static/css/home.css">
 </head>
+
 <body>
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+      </div>
+      
     <!-- Background Shapes -->
     <div class="background-shape left"></div>
     <div class="background-shape right"></div>
@@ -24,7 +36,7 @@
                 <div class="container">
                     <!-- Brand -->
                     <a class="navbar-brand" href="#">
-                        <img src="static/images/FullLogo_Transparent.png" alt="StudyMate" class="navbar-logo">
+                        <img src="static/images/FullLogo_Transparent.png" alt="StudyMate" class="navbar-logo animate-logo">
                     </a>
                     <!-- Toggler -->
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +75,7 @@
                 <div class="row align-items-center">
                     <!-- Text Content Section -->
                     <div class="col-md-6">
-                        <h1 class="main-heading">Manage Your Study Efficiently</h1>
+                        <h1 class="main-heading animate-text">Manage Your Study Efficiently</h1>
                         <p class="main-content">With StudyMate, you can keep all your learning information in one spot, allowing you to concentrate on mastering the material instead of organizing data.</p>
                         <!-- Buttons for user actions -->
                         <div class="button-group">
@@ -84,7 +96,7 @@
             <h2 class="text-center mb-5">Powerful Features</h2>
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <div class="feature-card">
+                    <div class="feature-card fade-in-up">
                         <div class="feature-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
@@ -93,7 +105,7 @@
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <div class="feature-card">
+                    <div class="feature-card fade-in-up">
                         <div class="feature-icon">
                             <i class="fas fa-bell"></i>
                         </div>
@@ -102,7 +114,7 @@
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <div class="feature-card">
+                    <div class="feature-card fade-in-up">
                         <div class="feature-icon">
                             <i class="fas fa-trophy"></i>
                         </div>
@@ -113,16 +125,127 @@
             </div>
         </div>
     </section>
-    <!-- Section 3: How it works -->
 
-    <!-- Section 4: Testimonials -->
-     
-    <footer>
-        <p>&copy; 2025 StudyMate. All rights reserved.</p>
+     <!-- Section 3: Study Tracker Overview -->
+     <section class="study-tracker">
+        <div class="container">
+          <div class="row align-items-center">
+            <!-- Left: Image -->
+            <div class="col-md-6 mb-4 mb-md-0 animate-fade slide-left">
+              <img src="static/images/study-tracker-screenshot.png" alt="Study Tracker UI" class="img-fluid shadow-lg rounded-lg">
+            </div>
+      
+            <!-- Right: Text & Features -->
+            <div class="col-md-6 animate-fade slide-right">
+              <h2 class="tracker-title">Study Tracker is <span class="highlight">free</span><br>and <span class="highlight">open source</span>.</h2>
+              <p class="tracker-desc">Run StudyMate in the cloud or on your own infrastructure. Customize it to fit your own needs.</p>
+      
+              <div class="row mt-4">
+                <!-- Card 1 -->
+                <div class="col-12 col-sm-4 mb-3">
+                    <div class="tracker-feature text-center fade-in-up">
+                    <div class="tracker-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h5>Easy to manage</h5>
+                    <p class="feature-desc">Manage users, projects, and settings in the admin dashboard.</p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="col-12 col-sm-4 mb-3">
+                    <div class="tracker-feature text-center fade-in-up">
+                    <div class="tracker-icon">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <h5>Modern design</h5>
+                    <p class="feature-desc">Minimal and intuitive interface that looks great and feels smooth.</p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="col-12 col-sm-4 mb-3">
+                    <div class="tracker-feature text-center fade-in-up">
+                    <div class="tracker-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h5>Tool-friendly</h5>
+                    <p class="feature-desc">Easily integrate with your tech stack using our open API.</p>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>      
+
+    <!-- Section 4: Research Banner -->
+    <section class="research-banner">
+        <div class="container text-center">
+        <p class="research-subtitle">MADE FOR SCIENCE</p>
+        <h2 class="research-title">Built by research professionals,<br>for research professionals</h2>
+        <p class="research-desc">Stop wasting time juggling spreadsheets and start managing your study data<br>in a modern, efficient, and scalable way.</p>
+        <a href="#" class="btn research-btn">Check it out</a>
+        </div>
+    </section>
+  
+    <!-- Footer -->
+    <footer class="custom-footer">
+        <div class="container">
+        <div class="row footer-top align-items-start">
+            <!-- Logo & tagline -->
+            <div class="col-md-4 mb-4 mb-md-0">
+            <div class="footer-logo d-flex align-items-center mb-3">
+                <img src="static/images/logo.png" alt="Logo" class="footer-icon mr-2">
+                <a href="https://github.com/abdullah-masud/study-mate/tree/main"><span class="footer-brand">StudyMate</span></a>
+            </div>
+            <p class="footer-tagline">A better way to manage studies.</p>
+            <p class="footer-copy">© 2025 StudyMate. All rights reserved.</p>
+            </div>
+    
+            <!-- Footer Links -->
+            <div class="col-md-2 col-6 mb-3">
+            <h6 class="footer-heading">SOFTWARE</h6>
+            <ul class="footer-links">
+                <li><a href="#">StudyMate</a></li>
+                <li><a href="#">StudyMate CDK</a></li>
+            </ul>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+            <h6 class="footer-heading">RESOURCES</h6>
+            <ul class="footer-links">
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">Release Notes</a></li>
+            </ul>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+            <h6 class="footer-heading">CONNECT</h6>
+            <ul class="footer-links">
+                <li><a href="#">Support</a></li>
+                <li><a href="#">Inquiries</a></li>
+                <li><a href="#">About Us</a></li>
+            </ul>
+            </div>
+            <div class="col-md-2 col-6 mb-3">
+            <h6 class="footer-heading">LEGAL</h6>
+            <ul class="footer-links">
+                <li><a href="#">License</a></li>
+            </ul>
+            </div>
+        </div>
+        </div>
     </footer>
-
+  
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/app/static/js/home.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+          document.body.classList.add('loaded');
+        });
+      </script>
+    
+    <button id="backToTop" title="Go to top">↑</button>
+    <div id="toast" class="toast">Loading your workspace...</div>
+
 </body>
 </html>
+
