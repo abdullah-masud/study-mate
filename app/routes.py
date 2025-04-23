@@ -6,6 +6,6 @@ home_bp = Blueprint('home', __name__)
 def home():
     return render_template('home/home.html')
 
-@home_bp.route('/login')
+@home_bp.route('/login', methods=['GET', 'POST'])
 def login():
     return render_template('auth/login.html')
