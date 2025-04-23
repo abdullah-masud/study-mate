@@ -21,3 +21,4 @@ __pycache__/
 
 # 忽略 Jupyter Notebook 检查点
 .ipynb_checkpoints/
+__pycache__/
