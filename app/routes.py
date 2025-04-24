@@ -1,12 +1,9 @@
 from flask import Blueprint, render_template
 from flask import request, redirect, url_for, flash, session
-from app.models import db, Student 
+from app.models import db, Student, StudySession
 
 
 home_bp = Blueprint('home', __name__)
-
-
-
 
 @home_bp.route('/')
 def home():
@@ -14,13 +11,11 @@ def home():
 
 @home_bp.route('/dashboard')
 def dashboard():
-    id = session.get('id')  # or however you store it
-    if not id:
-        return redirect(url_for('login'))
-
-    user = Student.query.get(id)
-    return render_template('dashboard/dashboard.html', username=user.username)
-
+    if "username" in session and "id" in session:
+        user_id = session['id']
+        sessions = StudySession.query.filter_by(student_id=user_id).all()  # 🟢 Get only this user's sessions
+        return render_template('dashboard/dashboard.html', username=session['username'], sessions=sessions)
+    return redirect(url_for('home.login'))
 
 # Login route
 # This route clears the session and redirects to the home page.
@@ -68,3 +63,10 @@ def signup():
         return redirect(url_for('home.dashboard'))
 
     return render_template('auth/signup.html')
+
+# logout route
+@home_bp.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out.')
+    return redirect(url_for('home.login'))

@@ -12,6 +12,9 @@ class StudySession(db.Model):
     hours = db.Column(db.Integer, nullable=False)  # 学习小时数
     color = db.Column(db.String(20), default="#888888")  # 🟡 新增：记录颜色值（如 #36a2eb）
 
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)  # 👈 Link to Student
+
+
     def __repr__(self):
         # 调试时使用的字符串表示形式
         return f'<StudySession {self.date} {self.subject} {self.hours}h>'
@@ -21,6 +24,8 @@ class Student(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
+
+    sessions = db.relationship('StudySession', backref='student', lazy=True)  # 👈 Relationship
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
