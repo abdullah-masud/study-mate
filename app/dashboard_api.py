@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 dashboard_api = Blueprint('dashboard_api', __name__)
 
-# 路由 1：添加学习记录
+# Route 1: Adding a Learning Record
 @dashboard_api.route('/api/add-session', methods=['POST'])
 def add_session():
     data = request.get_json()
@@ -53,7 +53,7 @@ def add_session():
     db.session.commit()
     return jsonify({"message": "Session added successfully!"}), 200
 
-# 路由 2：返回统计信息
+# Route 2: Return Statistics
 @dashboard_api.route('/api/get-summary', methods=['GET'])
 def get_summary():
     student_id = session.get('id')
@@ -78,7 +78,7 @@ def get_summary():
         "leastStudied": least
     })
 
-# 路由 3：返回所有学习记录
+# Route 3: Return to All Learning Records
 @dashboard_api.route('/api/get-records', methods=['GET'])
 def get_records():
     student_id = session.get('id')
@@ -98,7 +98,7 @@ def get_records():
     ]
     return jsonify(records)
 
-# 路由 4：删除学习记录（改名✅）
+# Route 4: Deletion of Learning Record (renamed ✅)
 @dashboard_api.route('/api/delete-session/<int:session_id>', methods=['DELETE'])
 def delete_study_session(session_id):
     student_id = session.get('id')
@@ -112,7 +112,7 @@ def delete_study_session(session_id):
         return jsonify({"message": "Deleted successfully!"}), 200
     return jsonify({"error": "Record not found or no permission."}), 404
 
-# 路由 5：按周返回学习记录
+# Route 5: Return to Learning Record by Week
 @dashboard_api.route('/api/productivity-by-day', methods=['GET'])
 def productivity_by_day():
     student_id = session.get('id')
@@ -144,7 +144,7 @@ def productivity_by_day():
     sorted_data = dict(sorted(data.items()))
     return jsonify(sorted_data)
 
-# 路由 6：更新某个学科的颜色
+# Route 6: Updating the colours of a subject
 @dashboard_api.route('/api/update-color-subject/<subject>', methods=['PUT'])
 def update_color_by_subject(subject):
     student_id = session.get('id')
