@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from app.models import db, StudySession
 from collections import defaultdict
 from datetime import datetime
@@ -15,45 +15,48 @@ def add_session():
     subject = data.get('subject')
     hours = data.get('hours')
     color = data.get('color')
+    
+    student_id = session.get('id')
+    if not student_id:
+        return jsonify({"error": "User not logged in"}), 401
 
-    # 基本校验
     if not date or not subject or not isinstance(hours, int):
         return jsonify({"error": "Invalid input data format."}), 400
 
     if hours <= 0 or hours > 24:
         return jsonify({"error": "Hours must be between 1 and 24."}), 400
-    
-    # ✅ 校验日期格式（YYYY-MM-DD）并验证是否为合法日期
+
     try:
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
     except ValueError:
         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
-    
-    
 
-    # 查询当天已有记录
-    existing_sessions = StudySession.query.filter_by(date=date).all()
+    # 🟡 只查询该用户自己的记录！
+    existing_sessions = StudySession.query.filter_by(date=date, student_id=student_id).all()
     total_hours = sum(s.hours for s in existing_sessions)
 
     if total_hours + hours > 24:
         return jsonify({"error": f"Total study time for {date} exceeds 24 hours."}), 400
 
-    # ✅ 插入数据
-    # 查找当天是否已有该学科记录
-    existing = StudySession.query.filter_by(date=date, subject=subject).first()
+    # ✅ 查找当天这个学生这个科目的记录
+    existing = StudySession.query.filter_by(date=date, subject=subject, student_id=student_id).first()
 
     if existing:
-    # ✅ 如果已存在，就直接累加
         existing.hours += hours
-        existing.color = color  # ✅ 同时更新颜色（可选）
+        existing.color = color  # 可选更新颜色
     else:
-    # ✅ 否则创建新记录
-        new_session = StudySession(date=date, subject=subject, hours=hours, color=color)
+        new_session = StudySession(
+            date=date,
+            subject=subject,
+            hours=hours,
+            color=color,
+            student_id=student_id  # ✅ 必须带 student_id
+        )
         db.session.add(new_session)
 
     db.session.commit()
-
     return jsonify({"message": "Session added successfully!"}), 200
+
 
 
 # 路由 2：返回统计信息

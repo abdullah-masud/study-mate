@@ -18,7 +18,8 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
   const subject = document.getElementById("subject").value;
   const hours = parseInt(document.getElementById("hours").value, 10);
   const color = document.getElementById("color").value;
-
+  const userId = localStorage.getItem('user_id');
+  
   const isValidDate = (dateString) => {
     const date = new Date(dateString);
     const isValidFormat = /^\d{4}-\d{2}-\d{2}$/.test(dateString);
