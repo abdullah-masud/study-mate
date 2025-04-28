@@ -1,37 +1,37 @@
 /* dashboard.css */
 
-/* 用于圆角统一化和背景微调 */
+/* For corner rounding and background fine-tuning */
 .rounded-xl {
     border-radius: 1rem;
   }
   
-  /* 自定义按钮 hover 效果（可选） */
+  /* Custom button hover effect (optional) */
   button:hover {
     cursor: pointer;
     opacity: 0.95;
   }
   
-  /* 如果图片大小没设置，这里设置默认大小 */
+  /* If the image size is not set, set the default size here */
   img {
     max-width: 100%;
     height: auto;
     display: block;
   }
   
-  /* 自定义底部字体样式 */
+  /* Customising the bottom font style */
   footer {
     font-size: 0.85rem;
     color: #777;
   }
   
-  /* 卡片类：统一内边距与阴影 */
+  /* Card class: uniform internal margins and shading */
   .card {
     padding: 1rem;
     border-radius: 0.5rem;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
   }
   
-  /* 背景色微调（可根据主题换） */
+  /* Background colour fine-tuning (can be changed according to the theme) */
   .bg-gray-100 {
     background-color: #f7f7f7;
   }
