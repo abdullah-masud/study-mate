@@ -94,10 +94,33 @@
                         <!-- Placeholder for additional information -->
                     </div>
                 </div>
-                <!-- Image Section -->
-                <div class="col-md-6">
-                    <img src="dashboard-image.png" alt="Dashboard Preview" class="img-fluid">
-                    <!-- Dashboard preview image -->
+                <!-- Image Section (Dashboard Preview with Modal Trigger) -->
+                <div class="col-md-6 text-center">
+                    <img src="{{ url_for('static', filename='images/01.png') }}" alt="Dashboard Preview" class="preview-image" onclick="openModal()">
+                    <p class="preview-text" onclick="openModal()">View More Features</p>
+                </div>
+
+                <!-- Modal Popup for sliding images -->
+                <div id="imageModal" class="modal">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <div class="modal-content">
+                        <div class="slide">
+                            <img src="{{ url_for('static', filename='images/01.png') }}" alt="Feature 1">
+                        </div>
+                        <div class="slide">
+                            <img src="{{ url_for('static', filename='images/02.png') }}" alt="Feature 2">
+                        </div>
+                        <div class="slide">
+                            <img src="{{ url_for('static', filename='images/03.png') }}" alt="Feature 3">
+                        </div>
+                        <div class="slide">
+                            <img src="{{ url_for('static', filename='images/04.png') }}" alt="Feature 4">
+                        </div>
+
+                        <!-- Previous/Next buttons -->
+                        <a class="prev" onclick="plusSlides(-1)">❮</a>
+                        <a class="next" onclick="plusSlides(1)">❯</a>
+                    </div>
                 </div>
             </div>
         </div>
