@@ -979,3 +979,98 @@ body {
     transform: scale(1);
   }
 }
+
+/* Modal Popup Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  padding-top: 80px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Modal Content Area */
+.modal-content {
+  position: relative;
+  margin: auto;
+  padding: 0;
+  max-width: 80%;
+  max-height: 80%;
+}
+
+/* Each Slide */
+.slide {
+  display: none;
+  text-align: center;
+}
+
+.slide img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* Close Button */
+.close {
+  position: absolute;
+  top: 30px;
+  right: 50px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Previous and Next Buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 30px;
+  user-select: none;
+  transform: translateY(-50%);
+}
+
+.prev {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+/* Dashboard Preview Area */
+.dashboard-preview {
+  text-align: center;
+  margin: 50px auto;
+}
+
+/* Preview Image */
+.preview-image {
+  width: 100%;
+  max-width: 700px;
+  cursor: pointer;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.preview-image:hover {
+  transform: scale(1.02);
+}
+
+/* Preview Text */
+.preview-text {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: var(--primary);
+  cursor: pointer;
+}
