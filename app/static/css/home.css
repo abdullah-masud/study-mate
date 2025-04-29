@@ -264,6 +264,10 @@ body.dark-mode .tracker-feature.hover-card:hover .tracker-icon {
   font-size: 1rem;
 }
 
+body.dark-mode #toggleDarkMode i {
+  color: #212529; 
+}
+
 /* Primary button styling */
 .btn-primary {
   background-color: var(--primary);
