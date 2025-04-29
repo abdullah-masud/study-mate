@@ -103,3 +103,32 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.setItem('dark-mode', isDark);
   });
 });
+
+// Open Modal
+function openModal() {
+  document.getElementById('imageModal').style.display = "block";
+  showSlides(slideIndex = 1);
+}
+
+// Close Modal
+function closeModal() {
+  document.getElementById('imageModal').style.display = "none";
+}
+
+let slideIndex = 1;
+
+// Change Slide by n steps
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+// Display the current slide
+function showSlides(n) {
+  let slides = document.getElementsByClassName("slide");
+  if (n > slides.length) { slideIndex = 1 }
+  if (n < 1) { slideIndex = slides.length }
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  slides[slideIndex - 1].style.display = "block";
+}

@@ -30,6 +30,7 @@ def login():
             session['id'] = user.id
             session['username'] = user.username
             flash('Login successful!')
+            print("✅ 登录成功，session 里 id =", session['id'])
             return redirect(url_for('home.dashboard'))
         else:
             flash('Invalid credentials')

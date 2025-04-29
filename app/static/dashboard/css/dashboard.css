@@ -1,58 +1,125 @@
 /* dashboard.css */
 
-/* 用于圆角统一化和背景微调 */
-.rounded-xl {
-    border-radius: 1rem;
+:root {
+  --primary: #120b7f;
+  --secondary: #74ccfc;
+  --accent: #4a3eff;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --text: #212529;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: var(--light);
+  color: var(--text);
+}
+
+.dashboard-header {
+  background-color: var(--primary);
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+.dashboard-header img {
+  height: 70px;
+  margin-right: 10px;
+}
+
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #ddd;
+  min-height: 100vh;
+  padding: 30px 20px;
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--primary);
+}
+
+.sidebar p {
+  margin-bottom: 20px;
+}
+
+.sidebar .btn {
+  width: 100%;
+}
+
+.main-content {
+  padding: 30px;
+}
+
+.card-custom {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card-custom h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--primary);
+}
+
+.table-custom {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table-custom th,
+.table-custom td {
+  padding: 15px;
+  text-align: center;
+}
+
+.table-custom thead {
+  background: var(--secondary);
+  color: #fff;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  background: var(--light);
+  margin-top: 40px;
+  color: #6c757d;
+}
+
+/* Chart area responsiveness */
+#productivity-chart,
+#weekly-pie-chart {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    min-height: auto;
   }
-  
-  /* 自定义按钮 hover 效果（可选） */
-  button:hover {
-    cursor: pointer;
-    opacity: 0.95;
+  .main-content {
+    padding: 20px;
   }
-  
-  /* 如果图片大小没设置，这里设置默认大小 */
-  img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-  
-  /* 自定义底部字体样式 */
-  footer {
-    font-size: 0.85rem;
-    color: #777;
-  }
-  
-  /* 卡片类：统一内边距与阴影 */
-  .card {
-    padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* 背景色微调（可根据主题换） */
-  .bg-gray-100 {
-    background-color: #f7f7f7;
-  }
-  
-  .bg-white {
-    background-color: #ffffff;
-  }
-  
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.8s ease-out forwards;
-  }
-  
-  
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;  
+  margin: 0 auto;    
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: auto !important; 
+  aspect-ratio: 1 / 1;     
+}
+

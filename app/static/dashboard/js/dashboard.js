@@ -1,6 +1,6 @@
 let currentWeekStart = getStartOfWeek(new Date());
 
-// 页面加载后统一初始化
+// Unified initialisation after page load
 window.addEventListener("DOMContentLoaded", () => {
   fetchSummary();
   fetchRecords();
@@ -12,13 +12,14 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// 表单提交逻辑
+// Form Submission Logic
 document.getElementById("submit-btn").addEventListener("click", async () => {
   const date = document.getElementById("date").value;
   const subject = document.getElementById("subject").value;
   const hours = parseInt(document.getElementById("hours").value, 10);
   const color = document.getElementById("color").value;
-
+  const userId = localStorage.getItem('user_id');
+  
   const isValidDate = (dateString) => {
     const date = new Date(dateString);
     const isValidFormat = /^\d{4}-\d{2}-\d{2}$/.test(dateString);
@@ -54,7 +55,7 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
     if (response.ok) {
       alert(result.message || "添加成功！");
       
-      // ✅ 手动清空表单字段
+      // ✅ Manually clear form fields
       document.getElementById("date").value = "";
       document.getElementById("subject").value = "";
       document.getElementById("hours").value = "";
@@ -64,11 +65,11 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
       fetchRecords();
       renderProductivityChart(currentWeekStart);
     } else {
-      alert("提交失败：" + (result.error || "未知错误"));
+      alert("Failed to submit：" + (result.error || "unknown error"));
     }
   } catch (error) {
-    console.error("❌ 网络错误：", error);
-    alert("网络错误，请稍后再试！");
+    console.error("❌ network error：", error);
+    alert("Network error, please try again later!");
   }
 });
 
@@ -80,7 +81,7 @@ async function fetchSummary() {
     document.getElementById("most-subject").textContent = summary.mostStudied || "-";
     document.getElementById("least-subject").textContent = summary.leastStudied || "-";
   } catch (error) {
-    console.error("❌ 获取统计信息失败：", error);
+    console.error("❌ Failed to get statistics：", error);
   }
 }
 
@@ -110,12 +111,12 @@ async function fetchRecords() {
       tableBody.appendChild(row);
     });
   } catch (error) {
-    console.error("❌ 获取记录失败：", error);
+    console.error("❌ Failed to get the record:", error);
   }
 }
 
 async function deleteRecord(id) {
-  if (!confirm("确定要删除这条记录吗？")) return;
+  if (!confirm("Sure you want to delete this record?")) return;
 
   try {
     const response = await fetch(`/api/delete-session/${id}`, { method: "DELETE" });
@@ -126,10 +127,10 @@ async function deleteRecord(id) {
       fetchRecords();
       renderProductivityChart();
     } else {
-      alert("删除失败：" + result.error);
+      alert("Failed to delete：" + result.error);
     }
   } catch (error) {
-    alert("网络错误，无法删除记录");
+    alert("Network error, unable to delete records");
   }
 }
 
@@ -143,10 +144,10 @@ async function updateColor(id, newColor) {
     if (response.ok) {
       renderProductivityChart();
     } else {
-      alert("颜色更新失败");
+      alert("Colour update failed");
     }
   } catch (error) {
-    alert("网络错误，无法修改颜色");
+    alert("Network error, unable to change colour");
   }
 }
 
@@ -199,11 +200,11 @@ async function renderProductivityChart(startDate = currentWeekStart) {
 
     renderPieChartFromWeekData(data);
   } catch (error) {
-    console.error("图表加载失败：", error);
+    console.error("Chart loading failure：", error);
   }
 }
 
-// 更新饼图的日期标签
+// Updating the date labels of pie charts
 function updatePieWeekLabel(startDate) {
   const endDate = new Date(startDate);
   endDate.setDate(startDate.getDate() + 6);
@@ -258,13 +259,13 @@ async function handleColorChange(subject, newColor) {
       body: JSON.stringify({ color: newColor })
     });
     if (response.ok) renderProductivityChart();
-    else alert("更新失败");
+    else alert("update failure");
   } catch (error) {
-    alert("网络错误，无法修改颜色");
+    alert("Network error, unable to change colour");
   }
 }
 
-// 处理日期选择器的日期变化
+// Handle date picker changes
 document.getElementById("prev-week").addEventListener("click", () => {
   currentWeekStart.setDate(currentWeekStart.getDate() - 7);
   renderProductivityChart(currentWeekStart);
@@ -275,7 +276,7 @@ document.getElementById("next-week").addEventListener("click", () => {
   renderProductivityChart(currentWeekStart);
 });
 
-// 处理饼图的日期变化
+// Handle date changes for pie charts
 document.getElementById("prev-pie-week").addEventListener("click", () => {
   currentWeekStart.setDate(currentWeekStart.getDate() - 7);
   renderPieChart(currentWeekStart);
@@ -306,7 +307,7 @@ function updateWeekLabel(startDate) {
 
 let pieChartInstance = null;
 
-// 更新饼图的日期标签
+// Update the date labels of the pie chart
 async function renderPieChart(startDate = currentWeekStart) {
   const response = await fetch(`/api/productivity-by-day?start=${formatDate(startDate)}`);
   const data = await response.json();
