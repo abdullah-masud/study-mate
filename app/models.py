@@ -15,6 +15,11 @@ class StudySession(db.Model):
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)  # 👈 Link to Student
 
+    @classmethod
+    def total_hours_for_student(cls, student_id):
+        #Calculate total study hours for a specific student.
+        return db.session.query(db.func.sum(StudySession.hours)).filter_by(student_id=student_id).scalar() or 0
+
 
     def __repr__(self):
         # String representation for debugging
