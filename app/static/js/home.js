@@ -85,15 +85,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     lastScrollTop = scrollTop;
   });
-// 🌙 Dark Mode Toggle Logic
-document.addEventListener('DOMContentLoaded', function() {
+
+  // 🌙 Dark Mode Toggle Logic
   const toggleBtn = document.getElementById('toggleDarkMode');
   const body = document.body;
 
-  // Check for saved preference
   const isDarkMode = localStorage.getItem('dark-mode') === 'true';
-  
-  // Set initial state
   if (isDarkMode) {
     body.classList.add('dark-mode');
     updateToggleIcon(true);
@@ -101,42 +98,36 @@ document.addEventListener('DOMContentLoaded', function() {
     updateToggleIcon(false);
   }
 
-  // Toggle on click
   toggleBtn.addEventListener('click', () => {
-    const isNowDark = !body.classList.contains('dark-mode');
+    const nowDark = !body.classList.contains('dark-mode');
     body.classList.toggle('dark-mode');
-    updateToggleIcon(isNowDark);
-    localStorage.setItem('dark-mode', isNowDark);
+    updateToggleIcon(nowDark);
+    localStorage.setItem('dark-mode', nowDark);
   });
 
-  // Helper function to update icon
   function updateToggleIcon(isDark) {
-    toggleBtn.innerHTML = isDark 
-      ? '<i class="fas fa-sun" style="display: inline-block;"></i>' 
-      : '<i class="fas fa-moon" style="display: inline-block;"></i>';
+    toggleBtn.innerHTML = isDark
+      ? '<i class="fas fa-sun"></i>'
+      : '<i class="fas fa-moon"></i>';
   }
 });
-});
 
-// Open Modal
+// ---------- Modal Slide Viewer ----------
 function openModal() {
   document.getElementById('imageModal').style.display = "block";
   showSlides(slideIndex = 1);
 }
 
-// Close Modal
 function closeModal() {
   document.getElementById('imageModal').style.display = "none";
 }
 
 let slideIndex = 1;
 
-// Change Slide by n steps
 function plusSlides(n) {
   showSlides(slideIndex += n);
 }
 
-// Display the current slide
 function showSlides(n) {
   let slides = document.getElementsByClassName("slide");
   if (n > slides.length) { slideIndex = 1 }

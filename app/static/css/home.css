@@ -68,6 +68,15 @@ body.dark-mode .tracker-feature.hover-card:hover .tracker-icon {
   filter: drop-shadow(0 0 2px #4a3eff99);
 }
 
+#toggleDarkMode i {
+  font-size: 1rem;
+}
+
+body.dark-mode #toggleDarkMode i {
+  color: #212529;
+}
+
+
 /* Floating background elements with soft blur and animation */
 .background-shape {
   position: fixed;
