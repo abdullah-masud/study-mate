@@ -2,22 +2,22 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
 
-# 创建 SQLAlchemy 对象，用于数据库操作
+# Creating SQLAlchemy objects for database operations
 db = SQLAlchemy()
 
-# 学习记录模型类，对应数据库中的 study_session 表
+# The study record model class, corresponding to the study_session table in the database.
 class StudySession(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # 主键，自增ID
-    date = db.Column(db.String(20), nullable=False)  # 学习日期，字符串格式
-    subject = db.Column(db.String(100), nullable=False)  # 学习科目
-    hours = db.Column(db.Integer, nullable=False)  # 学习小时数
-    color = db.Column(db.String(20), default="#888888")  # 🟡 新增：记录颜色值（如 #36a2eb）
+    id = db.Column(db.Integer, primary_key=True)  # Primary key, self incrementing ID
+    date = db.Column(db.String(20), nullable=False)  # Learning Dates, String Format
+    subject = db.Column(db.String(100), nullable=False)  # Study Subjects
+    hours = db.Column(db.Integer, nullable=False)  # Study hours
+    color = db.Column(db.String(20), default="#888888")  # 🟡 Added: Record colour values (e.g. #36a2eb)
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)  # 👈 Link to Student
 
 
     def __repr__(self):
-        # 调试时使用的字符串表示形式
+        # String representation for debugging
         return f'<StudySession {self.date} {self.subject} {self.hours}h>'
 
 class Student(db.Model):

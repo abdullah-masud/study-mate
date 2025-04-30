@@ -2,161 +2,231 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <title>StudyMate Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyMate - Dashboard</title>
 
-  <!-- Tailwind CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-  <!-- 自定义 CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard/css/dashboard.css') }}">
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+
+  <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard/css/dashboard.css') }}">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
-<body class="bg-gray-100 text-gray-800">
-  <!-- 顶部导航 -->
-  <header class="text-white p-4 shadow-md" style="background-color: rgb(11, 6, 120);">
-    <h1 class="text-2xl font-bold flex items-center space-x-3">
-      <img src="{{ url_for('static', filename='images/studymate-logo.png') }}" alt="StudyMate Logo"
-        style="width: 80px; height: 80px;" class="rounded-lg opacity-0 animate-fade-in" />
-      <span>StudyMate Dashboard</span>
-    </h1>
-  </header>
+<body>
+  <!-- Loader -->
+  <div id="loader-wrapper">
+    <div id="loader"></div>
+  </div>
 
-
-
-  <div class="flex min-h-screen">
-    <!-- 左侧用户信息栏 -->
-    <aside class="w-64 bg-white shadow-md p-6 border border-gray-500 ">
-      <h2 class=" text-lg font-semibold mb-4">👤 User Info</h2>
-      <p class="text-gray-700">Welcome <span class="font-bold">{{username}}</span></p>
-      <a href="{{url_for('home.logout')}}">
-        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg shadow">
-          Logout
-        </button>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="{{ url_for('static', filename='images/studymate-logo.png') }}" alt="StudyMate" class="navbar-logo animate-logo">
       </a>
-    </aside>
-
-    <!-- 主体内容 -->
-    <div class="flex-1">
-      <main class="max-w-5xl mx-auto p-6 space-y-8">
-
-        <!-- 表单区域 -->
-        <section class="bg-white rounded-xl shadow p-6 space-y-6">
-          <h2 class="text-xl font-semibold mb-2">➕ Add New Study Session</h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-              <input type="text" id="date" placeholder="YYYY-MM-DD"
-                class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            </div>
-
-            <div>
-              <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-              <input type="text" id="subject" placeholder="e.g. Math, Science"
-                class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            </div>
-
-            <div>
-              <label for="hours" class="block text-sm font-medium text-gray-700 mb-1">Hours</label>
-              <input type="number" id="hours" min="1" max="24" placeholder="Hours"
-                class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-            </div>
-
-            <div>
-              <label for="color" class="block text-sm font-medium text-gray-700 mb-1">Color</label>
-              <input type="color" id="color" value="#3b82f6"
-                class="w-full border rounded-lg px-3 py-2 h-10 cursor-pointer" />
-            </div>
-          </div>
-
-          <button id="submit-btn"
-            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg shadow">
-            📥 Submit Session
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('home.logout') }}">Logout</a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center ml-3">
+          <a href="{{ url_for('dashboard_home.dashboard_home') }}" class="btn btn-primary mr-3">Dashboard</a>
+          <button id="toggleDarkMode" title="Toggle Dark Mode">
+            <i class="fas fa-moon"></i>
           </button>
-        </section>
+        </div>
+      </div>
+    </div>
+  </nav>
 
+  <!-- Main Content -->
+  <main class="container py-5">
+    <input type="hidden" id="user-id" value="{{ session['id'] }}">
 
-        <!-- 卡片统计 -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-blue-100 p-4 rounded shadow text-center">
-            <p class="text-lg">Total Hours</p>
-            <p id="total-hours" class="text-2xl font-bold">0</p>
+    <!-- User Info -->
+    <div class="mb-5">
+      <h2>Welcome, <strong>{{username}}</strong></h2>
+    </div>
+
+    <!-- Add New Study Session -->
+    <section class="card mb-5">
+      <div class="card-body">
+        <h4 class="card-title mb-4">➕ Add New Study Session</h4>
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="date">Date</label>
+            <input type="text" id="date" class="form-control" placeholder="YYYY-MM-DD">
           </div>
-          <div class="bg-green-100 p-4 rounded shadow text-center">
-            <p class="text-lg">Most Studied</p>
-            <p id="most-subject" class="text-2xl font-bold">-</p>
+          <div class="col-md-3 mb-3">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" class="form-control" placeholder="e.g. Math">
           </div>
-          <div class="bg-red-100 p-4 rounded shadow text-center">
-            <p class="text-lg">Least Studied</p>
-            <p id="least-subject" class="text-2xl font-bold">-</p>
+          <div class="col-md-3 mb-3">
+            <label for="hours">Hours</label>
+            <input type="number" id="hours" min="1" max="24" class="form-control" placeholder="Hours">
           </div>
-        </section>
-
-        <!-- 图表区域 -->
-
-
-        <section class="bg-white p-6 rounded shadow mt-8">
-          <h2 class="text-xl font-semibold mb-4">📈 Productivity by Day of the Week</h2>
-
-          <!-- ⬅➡ 控制周切换的按钮 -->
-          <div class="flex items-center gap-4 mb-4">
-            <button id="prev-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">⬅ last week</button>
-            <span id="week-label" class="font-semibold text-lg text-blue-800 block mb-2 text-center">📅 next week</span>
-            <button id="next-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">next week ➡</button>
+          <div class="col-md-3 mb-3">
+            <label for="color">Color</label>
+            <input type="color" id="color" value="#3b82f6" class="form-control">
           </div>
+        </div>
+        <button id="submit-btn" class="btn btn-primary mt-3">📥 Submit Session</button>
+      </div>
+    </section>
 
-          <canvas id="productivity-chart" class="w-full h-64"></canvas>
-        </section>
-
-        <section class="bg-white p-6 rounded shadow mt-4">
-          <h2 class="text-xl font-semibold mb-4 text-center">📊 Subject Distribution This Week</h2>
-          <!-- 周切换按钮 -->
-          <div class="flex items-center justify-center gap-4 mb-4">
-            <button id="prev-pie-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">⬅ last week</button>
-            <span id="pie-week-label" class="font-semibold text-lg text-blue-800 block text-center">📅 </span>
-            <button id="next-pie-week" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">next week ➡</button>
+    <!-- Statistics Cards -->
+    <div class="row text-center mb-5">
+      <div class="col-md-4 mb-3">
+        <div class="card bg-light">
+          <div class="card-body">
+            <h5 class="card-title">Total Hours</h5>
+            <p id="total-hours" class="display-4">0</p>
           </div>
-
-          <div class="flex justify-center">
-            <div class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-              <canvas id="weekly-pie-chart"></canvas>
-            </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card bg-light">
+          <div class="card-body">
+            <h5 class="card-title">Most Studied</h5>
+            <p id="most-subject" class="display-4">-</p>
           </div>
-        </section>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card bg-light">
+          <div class="card-body">
+            <h5 class="card-title">Least Studied</h5>
+            <p id="least-subject" class="display-4">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Productivity Chart -->
+    <section class="card mb-5">
+      <div class="card-body">
+        <h4 class="card-title mb-4">📈 Productivity by Day</h4>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <button id="prev-week" class="btn btn-outline-secondary">⬅ Last Week</button>
+          <span id="week-label" class="font-weight-bold text-primary">📅 This Week</span>
+          <button id="next-week" class="btn btn-outline-secondary">Next Week ➡</button>
+        </div>
+        <canvas id="productivity-chart"></canvas>
+      </div>
+    </section>
 
-        <!-- 表格区域 -->
-        <section class="bg-white p-6 rounded shadow mt-8">
-          <h2 class="text-xl font-semibold mb-4">📋 Study History</h2>
-          <table class="w-full table-auto border border-gray-300">
-            <thead class="bg-gray-100">
+    <!-- Weekly Pie Chart -->
+    <section class="card mb-5">
+      <div class="card-body">
+        <h4 class="card-title mb-4">📊 Subject Distribution</h4>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <button id="prev-pie-week" class="btn btn-outline-secondary">⬅ Last Week</button>
+          <span id="pie-week-label" class="font-weight-bold text-primary">📅</span>
+          <button id="next-pie-week" class="btn btn-outline-secondary">Next Week ➡</button>
+        </div>
+        <div class="chart-container">
+          <canvas id="weekly-pie-chart" style="max-width:600px;"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Study History Table -->
+    <section class="card">
+      <div class="card-body">
+        <h4 class="card-title mb-4">📋 Study History</h4>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="thead-light">
               <tr>
-                <th class="p-2 border">Date</th>
-                <th class="p-2 border">Subject</th>
-                <th class="p-2 border">Hours</th>
-                <th class="p-2 border">Actions</th>
+                <th>Date</th>
+                <th>Subject</th>
+                <th>Hours</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="records-table-body">
-              <!-- 学习记录将通过 JS 动态插入 -->
+              <!-- Dynamic data here -->
             </tbody>
           </table>
-        </section>
-      </main>
+        </div>
+      </div>
+    </section>
 
-      <!-- 页脚 -->
-      <footer class="text-center text-sm text-gray-500 p-4">
-        &copy; 2025 StudyMate. All rights reserved.
-      </footer>
+  </main>
+
+  <!-- Footer -->
+  <footer class="custom-footer">
+    <div class="container">
+      <div class="row footer-top align-items-start">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="footer-logo d-flex align-items-center mb-3">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="footer-icon mr-2">
+            <a href="#"><span class="footer-brand">StudyMate</span></a>
+          </div>
+          <p class="footer-tagline">A better way to manage studies.</p>
+          <p class="footer-copy">© 2025 StudyMate. All rights reserved.</p>
+        </div>
+        <div class="col-md-8 row">
+          <div class="col-md-4 col-6">
+            <h6 class="footer-heading">SOFTWARE</h6>
+            <ul class="footer-links">
+              <li><a href="#">StudyMate</a></li>
+              <li><a href="#">StudyMate CDK</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4 col-6">
+            <h6 class="footer-heading">RESOURCES</h6>
+            <ul class="footer-links">
+              <li><a href="#">Documentation</a></li>
+              <li><a href="#">Release Notes</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4 col-6">
+            <h6 class="footer-heading">CONNECT</h6>
+            <ul class="footer-links">
+              <li><a href="#">Support</a></li>
+              <li><a href="#">About Us</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </footer>
 
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="{{ url_for('static', filename='dashboard/js/dashboard.js') }}"></script>
+
+  <script>
+    window.addEventListener('load', function () {
+      document.body.classList.add('loaded');
+    });
+  </script>
+
+  <button id="backToTop" title="Go to top">↑</button>
+  <div id="toast" class="toast">Loading your dashboard...</div>
 </body>
 
 </html>
