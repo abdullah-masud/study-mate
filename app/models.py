@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import validates
 
 # 创建 SQLAlchemy 对象，用于数据库操作
 db = SQLAlchemy()
@@ -26,6 +27,12 @@ class Student(db.Model):
     password_hash = db.Column(db.String(200), nullable=False)
 
     sessions = db.relationship('StudySession', backref='student', lazy=True)  # 👈 Relationship
+
+    @validates('email') # validates email
+    def validate_email(self, key, addresss):
+        assert '@' in addresss, 'Invalid email address'
+        return addresss
+    
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
