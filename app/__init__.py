@@ -3,6 +3,7 @@ from app.models import db
 from app.dashboard import dashboard_bp
 from app.dashboard_api import dashboard_api
 from app.routes import home_bp  # Add this to import the home routes
+from flask_migrate import Migrate
 
 def create_app():
     app = Flask(__name__)
@@ -12,6 +13,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
+    migrate = Migrate(app, db)
 
     # Register the blueprints
     app.register_blueprint(home_bp)  # Home routes without prefix
