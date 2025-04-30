@@ -15,6 +15,7 @@ def dashboard():
         user_id = session['id']
         sessions = StudySession.query.filter_by(student_id=user_id).all()  # 🟢 Get only this user's sessions
         return render_template('dashboard/dashboard.html', username=session['username'], sessions=sessions)
+    flash('You must be logged in to view the dashboard.', 'warning')
     return redirect(url_for('home.login'))
 
 # Login route
@@ -29,11 +30,10 @@ def login():
         if user and user.check_password(password):
             session['id'] = user.id
             session['username'] = user.username
-            flash('Login successful!')
-            print("✅ 登录成功，session 里 id =", session['id'])
+            flash('Login successful!', 'success')
             return redirect(url_for('home.dashboard'))
         else:
-            flash('Invalid credentials')
+             flash('Invalid email or password.', 'danger')
 
     return render_template('auth/login.html')
 
@@ -50,7 +50,7 @@ def signup():
 
         # Check if user already exists
         if Student.query.filter((Student.username == username) | (Student.email == email)).first():
-            flash('Username or email already exists')
+            flash('Username or email already exists.', 'warning')
             return redirect(url_for('home.signup'))
 
         # Create new user
@@ -60,8 +60,8 @@ def signup():
         db.session.commit()
         session['username'] = username  # Store username in session
 
-        flash('Signup successful! Please login.')
-        return redirect(url_for('home.dashboard'))
+        flash('Signup successful! Login to Continue', 'success')
+        return redirect(url_for('home.login'))
 
     return render_template('auth/signup.html')
 
@@ -69,5 +69,5 @@ def signup():
 @home_bp.route('/logout')
 def logout():
     session.clear()
-    flash('You have been logged out.')
+    flash('You have been logged out.', 'info')
     return redirect(url_for('home.login'))
