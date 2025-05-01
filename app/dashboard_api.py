@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-from app.models import db, StudySession
+from app.models import db, StudySession, Student, ShareRecord
 from collections import defaultdict
 from datetime import datetime, timedelta
 
@@ -163,6 +163,110 @@ def update_color_by_subject(subject):
     db.session.commit()
     return jsonify({"message": f"Color updated for subject {subject}!"}), 200
 
+
+
+# ========== 分享功能 ==========
+@dashboard_api.route('/api/share-record', methods=['POST'])
+def share_record():
+    data = request.get_json()
+    sender_id = session.get('id')
+    recipient_email = data.get("recipient_email")
+    share_summary = data.get("share_summary")
+    share_bar = data.get("share_bar")
+    share_pie = data.get("share_pie")
+
+    recipient = Student.query.filter_by(email=recipient_email).first()
+    if not recipient:
+        return jsonify({"error": "Recipient not found"}), 404
+
+    record = ShareRecord(
+        sender_id=sender_id,
+        recipient_id=recipient.id,
+        share_summary=share_summary,
+        share_bar=share_bar,
+        share_pie=share_pie
+    )
+    db.session.add(record)
+    db.session.commit()
+    return jsonify({"message": "Record shared successfully!"})
+
+
+@dashboard_api.route('/api/received-shares', methods=['GET'])
+def get_received_shares():
+    user_id = session.get('id')
+    shares = ShareRecord.query.filter_by(recipient_id=user_id).all()
+    senders = {}
+    for share in shares:
+        email = share.sender.email
+        if email not in senders:
+            senders[email] = {"summary": [], "bar": [], "pie": []}
+        if share.share_summary:
+            senders[email]["summary"].append(True)
+        if share.share_bar:
+            senders[email]["bar"].append(True)
+        if share.share_pie:
+            senders[email]["pie"].append(True)
+    return jsonify(senders)
+
+
+@dashboard_api.route('/api/shared-chart-data', methods=['GET'])
+def get_shared_chart_data():
+    sender_email = request.args.get('sender_email')
+    current_user_id = session.get('id')
+
+    sender = Student.query.filter_by(email=sender_email).first()
+    if not sender:
+        return jsonify({"error": "Sender not found"}), 404
+
+    today = datetime.today().date()
+    start_date = today - timedelta(days=6)
+    sessions = StudySession.query.filter(
+        StudySession.student_id == sender.id,
+        StudySession.date >= start_date,
+        StudySession.date <= today
+    ).all()
+
+    total_hours = 0
+    subject_hours = defaultdict(int)
+    bar_data = defaultdict(lambda: defaultdict(int))
+    colors = {}
+
+    for s in sessions:
+        total_hours += s.hours
+        subject_hours[s.subject] += s.hours
+        bar_data[s.date][s.subject] += s.hours
+        if s.subject not in colors:
+            colors[s.subject] = s.color or "#888"
+
+    subjects = list(subject_hours.keys())
+    dates = [(start_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
+    bar_chart_data = {
+        "labels": dates,
+        "datasets": [
+            {
+                "label": subject,
+                "data": [bar_data.get(datetime.strptime(date, "%Y-%m-%d").date(), {}).get(subject, 0) for date in dates],
+                "backgroundColor": colors.get(subject, "#ccc")
+            }
+            for subject in subjects
+        ]
+    }
+    pie_chart_data = {
+        "labels": subjects,
+        "datasets": [{
+            "data": [subject_hours[subj] for subj in subjects],
+            "backgroundColor": [colors.get(subj, "#ccc") for subj in subjects]
+        }]
+    }
+    return jsonify({
+        "summary": {
+            "totalHours": total_hours,
+            "mostStudied": max(subject_hours, key=subject_hours.get) if subject_hours else "-",
+            "leastStudied": min(subject_hours, key=subject_hours.get) if subject_hours else "-"
+        },
+        "barChartData": bar_chart_data,
+        "pieChartData": pie_chart_data
+    })
 
 
 

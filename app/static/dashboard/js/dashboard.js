@@ -317,3 +317,133 @@ async function renderPieChart(startDate = currentWeekStart) {
 
 
 
+// ✅ 顶部定义图表实例变量，避免 undefined 错误
+let sharedBarChart = null;
+let sharedPieChart = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+  // ✅ Share Modal 逻辑
+  const shareBtn = document.getElementById("confirm-share");
+  if (shareBtn) {
+    shareBtn.addEventListener("click", async () => {
+      const recipientEmail = document.getElementById("receiver-email")?.value.trim();
+      const shareSummary = document.getElementById("share-summary")?.checked;
+      const shareBar = document.getElementById("share-productivity")?.checked;
+      const sharePie = document.getElementById("share-piechart")?.checked;
+
+      if (!recipientEmail) {
+        alert("Please enter a recipient email.");
+        return;
+      }
+
+      const response = await fetch("/api/share-record", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipient_email: recipientEmail,
+          share_summary: shareSummary,
+          share_bar: shareBar,
+          share_pie: sharePie
+        })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert("🎉 Shared successfully!");
+        document.getElementById("shareModal")?.querySelector(".close")?.click();
+      } else {
+        alert("❌ Error: " + result.error);
+      }
+    });
+  }
+
+  // ✅ Shared With Me 逻辑
+  const senderSelect = document.getElementById("sender-select");
+  if (!senderSelect) return;
+
+  fetch("/api/received-shares")
+    .then(res => res.json())
+    .then(data => {
+      Object.keys(data).forEach(sender => {
+        const option = document.createElement("option");
+        option.value = sender;
+        option.textContent = sender;
+        senderSelect.appendChild(option);
+      });
+
+      document.getElementById("shared-summary").textContent = "";
+      document.getElementById("shared-productivity-chart").style.display = "none";
+      document.getElementById("shared-pie-chart").style.display = "none";
+    });
+
+  senderSelect.addEventListener("change", async (e) => {
+    const selected = e.target.value;
+    if (!selected) return;
+
+    const res1 = await fetch("/api/received-shares");
+    const allData = await res1.json();
+    const permission = allData[selected];
+
+    const summaryDiv = document.getElementById("shared-summary");
+    const barSection = document.getElementById("shared-productivity-chart");
+    const pieSection = document.getElementById("shared-pie-chart");
+
+    summaryDiv.textContent = permission.summary.length ? "📘 Summary was shared." : "—";
+    barSection.style.display = permission.bar.length ? "block" : "none";
+    pieSection.style.display = permission.pie.length ? "block" : "none";
+
+    const res2 = await fetch(`/api/shared-chart-data?sender_email=${selected}`);
+    const result = await res2.json();
+
+    // Summary
+    if (permission.summary.length) {
+      const { totalHours, mostStudied, leastStudied } = result.summary;
+      summaryDiv.innerHTML = `
+        <strong>Summary:</strong><br>
+        📊 <strong>Total Hours:</strong> ${totalHours}<br>
+        🔝 <strong>Most Studied:</strong> ${mostStudied}<br>
+        🔻 <strong>Least Studied:</strong> ${leastStudied}
+      `;
+    } else {
+      summaryDiv.innerHTML = "— No summary shared.";
+    }
+
+    // Bar Chart
+    if (permission.bar.length) {
+      const ctx = document.getElementById("shared-productivity-canvas").getContext("2d");
+      if (sharedBarChart) sharedBarChart.destroy();
+      sharedBarChart = new Chart(ctx, {
+        type: "bar",
+        data: result.barChartData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "top" }
+          },
+          scales: {
+            x: { stacked: true },
+            y: { stacked: true, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    // Pie Chart
+    if (permission.pie.length) {
+      const ctx = document.getElementById("shared-pie-canvas").getContext("2d");
+      if (sharedPieChart) sharedPieChart.destroy();
+      sharedPieChart = new Chart(ctx, {
+        type: "pie",
+        data: result.pieChartData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom" }
+          }
+        }
+      });
+    }
+  });
+});
+
+
