@@ -128,7 +128,7 @@
         </div>
     </main>
     <!-- Section 2: Key Features -->
-    <section class="features">
+    <section class="features" id="features">
         <div class="container">
             <h2 class="text-center mb-5">Powerful Features</h2>
             <div class="row">
@@ -230,54 +230,89 @@
         </div>
     </section>
 
+    
     <!-- Footer -->
     <footer class="custom-footer">
         <div class="container">
             <div class="row footer-top align-items-start">
-                <!-- Logo & tagline -->
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="footer-logo d-flex align-items-center mb-3">
-                        <img src="static/images/logo.png" alt="Logo" class="footer-icon mr-2">
-                        <a href="https://github.com/abdullah-masud/study-mate/tree/main"><span
-                                class="footer-brand">StudyMate</span></a>
+                <!-- Brand Column -->
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudyMate" class="footer-icon mr-2" style="height: 30px;">
+                        <a href="{{ url_for('home.home') }}" class="text-decoration-none">
+                            <span class="footer-brand">StudyMate</span>
+                        </a>
                     </div>
                     <p class="footer-tagline">A better way to manage studies.</p>
                     <p class="footer-copy">© 2025 StudyMate. All rights reserved.</p>
                 </div>
 
-                <!-- Footer Links -->
+                <!-- Product Column -->
                 <div class="col-md-2 col-6 mb-3">
-                    <h6 class="footer-heading">SOFTWARE</h6>
-                    <ul class="footer-links">
-                        <li><a href="#">StudyMate</a></li>
-                        <li><a href="#">StudyMate CDK</a></li>
+                    <h6 class="footer-heading">PRODUCT</h6>
+                    <ul class="footer-links list-unstyled">
+                        <li class="mb-2">
+                            <a href="{{ url_for('dashboard_home.dashboard_home') }}" class="d-flex align-items-center">
+                                <i class="fas fa-tachometer-alt mr-2" style="font-size: 14px;"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
+
+                <!-- Resources Column -->
                 <div class="col-md-2 col-6 mb-3">
                     <h6 class="footer-heading">RESOURCES</h6>
-                    <ul class="footer-links">
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Release Notes</a></li>
+                    <ul class="footer-links list-unstyled">
+                        <li class="mb-2">
+                            <a href="#features" class="d-flex align-items-center">
+                                <i class="fas fa-star mr-2" style="font-size: 14px;"></i>
+                                <span>Features</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/docs" class="d-flex align-items-center">
+                                <i class="fas fa-book mr-2" style="font-size: 14px;"></i>
+                                <span>Documentation</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
+
+                <!-- Support Column -->
                 <div class="col-md-2 col-6 mb-3">
-                    <h6 class="footer-heading">CONNECT</h6>
-                    <ul class="footer-links">
-                        <li><a href="#">Support</a></li>
-                        <li><a href="#">Inquiries</a></li>
-                        <li><a href="#">About Us</a></li>
+                    <h6 class="footer-heading">SUPPORT</h6>
+                    <ul class="footer-links list-unstyled">
+                        <li class="mb-2 d-flex align-items-center">
+                            <i class="fas fa-envelope mr-2" style="font-size: 14px;"></i>
+                            <span>help@studymate.com</span>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <i class="fas fa-phone mr-2" style="font-size: 14px;"></i>
+                            <span>+61 123 456 78</span>
+                        </li>
                     </ul>
                 </div>
+
+                <!-- Legal Column -->
                 <div class="col-md-2 col-6 mb-3">
                     <h6 class="footer-heading">LEGAL</h6>
-                    <ul class="footer-links">
-                        <li><a href="#">License</a></li>
+                    <ul class="footer-links list-unstyled">
+                        <li class="mb-2">
+                                <i class="fas fa-shield-alt mr-2" style="font-size: 14px;"></i>
+                                <span>Privacy Policy</span>
+                            </a>
+                        </li>
+                        <li>
+                                <i class="fas fa-file-contract mr-2" style="font-size: 14px;"></i>
+                                <span>Terms</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
     </footer>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
