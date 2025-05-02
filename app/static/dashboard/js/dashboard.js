@@ -73,9 +73,14 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
   }
 });
 
-async function fetchSummary() {
+async function fetchSummary(startDate = currentWeekStart) {
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6);
+  const startStr = formatDate(startDate);
+  const endStr = formatDate(endDate);
+
   try {
-    const response = await fetch("/api/get-summary");
+    const response = await fetch(`/api/get-summary?start=${startStr}&end=${endStr}`);
     const summary = await response.json();
     document.getElementById("total-hours").textContent = summary.totalHours || 0;
     document.getElementById("most-subject").textContent = summary.mostStudied || "-";
@@ -265,16 +270,17 @@ async function handleColorChange(subject, newColor) {
   }
 }
 
-// Handle date picker changes
-document.getElementById("prev-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+function shiftWeek(offset) {
+  const newStart = new Date(currentWeekStart);
+  newStart.setDate(newStart.getDate() + 7 * offset);
+  currentWeekStart = newStart;
+  fetchSummary(currentWeekStart);
   renderProductivityChart(currentWeekStart);
-});
+}
 
-document.getElementById("next-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-  renderProductivityChart(currentWeekStart);
-});
+document.getElementById("prev-week").addEventListener("click", () => shiftWeek(-1));
+document.getElementById("next-week").addEventListener("click", () => shiftWeek(1));
+
 
 // Handle date changes for pie charts
 document.getElementById("prev-pie-week").addEventListener("click", () => {
@@ -286,6 +292,10 @@ document.getElementById("next-pie-week").addEventListener("click", () => {
   currentWeekStart.setDate(currentWeekStart.getDate() + 7);
   renderPieChart(currentWeekStart);
 });
+
+
+
+
 
 
 function getStartOfWeek(date) {

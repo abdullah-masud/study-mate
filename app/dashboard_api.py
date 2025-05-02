@@ -60,7 +60,23 @@ def get_summary():
     if not student_id:
         return jsonify({"error": "User not logged in"}), 401
 
-    sessions = StudySession.query.filter_by(student_id=student_id).all()
+    # 获取时间范围参数
+    start_str = request.args.get('start')
+    end_str = request.args.get('end')
+
+    try:
+        if not start_str or not end_str:
+            raise ValueError("Missing date range")
+        start_date = datetime.strptime(start_str, "%Y-%m-%d").date()
+        end_date = datetime.strptime(end_str, "%Y-%m-%d").date()
+    except Exception as e:
+        return jsonify({"error": f"Invalid date format: {e}"}), 400
+
+    sessions = StudySession.query.filter(
+        StudySession.student_id == student_id,
+        StudySession.date >= start_date,
+        StudySession.date <= end_date
+    ).all()
 
     total_hours = 0
     subject_hours = defaultdict(int)

@@ -113,14 +113,14 @@ body {
 .chart-container {
   position: relative;
   width: 100%;
-  max-width: 500px;  
-  margin: 0 auto;    
+  max-width: 500px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1; /* ✅ 保持正方形比例 */
 }
 
 .chart-container canvas {
   width: 100% !important;
-  height: auto !important; 
-  aspect-ratio: 1 / 1;     
+  height: auto !important;
 }
 
 #shared-productivity-chart {
@@ -128,16 +128,4 @@ body {
   overflow: hidden;
 }
 
-.chart-container {
-  position: relative;
-  height: 400px;
-  max-width: 100%;
-}
 
-.chart-container canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100% !important;
-  width: 100% !important;
-}
