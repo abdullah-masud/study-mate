@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from flask import request, redirect, url_for, flash, session
 from app.models import db, Student, StudySession
+from app.utils import isPasswordComplex
 
 
 home_bp = Blueprint('home', __name__)
@@ -48,10 +49,17 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
-        # Check if user already exists
-        if Student.query.filter((Student.username == username) | (Student.email == email)).first():
+        # Validate password complexity
+        valid, message = isPasswordComplex(password)
+        if not valid:
+            flash(message, 'danger')
+            return render_template('auth/signup.html')
+
+         # Check if user already exists
+        existing_user = Student.query.filter((Student.username == username) | (Student.email == email)).first()
+        if existing_user:
             flash('Username or email already exists.', 'warning')
-            return redirect(url_for('home.signup'))
+            return redirect(url_for('home.signup'))  # This ensures the message is shown only on the signup page.
 
         # Create new user
         new_user = Student(username=username, email=email)

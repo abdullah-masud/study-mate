@@ -30,6 +30,7 @@ class Student(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
+    password_history = db.Column(db.JSON, default=[])
 
     sessions = db.relationship('StudySession', backref='student', lazy=True)  # 👈 Relationship
 
