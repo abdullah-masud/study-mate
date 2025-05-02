@@ -376,74 +376,88 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("shared-pie-chart").style.display = "none";
     });
 
-  senderSelect.addEventListener("change", async (e) => {
-    const selected = e.target.value;
-    if (!selected) return;
+    senderSelect.addEventListener("change", async (e) => {
+      const selected = e.target.value;
+      if (!selected) return;
+    
+      const res1 = await fetch("/api/received-shares");
+      const allData = await res1.json();
+      const permission = allData[selected];
+    
+      const summaryDiv = document.getElementById("shared-summary");
+      const barSection = document.getElementById("shared-productivity-chart");
+      const pieSection = document.getElementById("shared-pie-chart");
+    
+      // 🔧 先更新展示区域可见性
+      summaryDiv.textContent = permission.summary.length ? "📘 Summary was shared." : "—";
+      barSection.style.display = permission.bar.length ? "block" : "none";
+      pieSection.style.display = permission.pie.length ? "block" : "none";
+    
+      // 🔄 等待下一个宏任务（让 display: block 真正生效）
+      await new Promise(resolve => setTimeout(resolve, 50));
+    
+      const res2 = await fetch(`/api/shared-chart-data?sender_email=${selected}`);
+      const result = await res2.json();
+      console.log("🔎 Shared BarChartData:", result.barChartData);
 
-    const res1 = await fetch("/api/received-shares");
-    const allData = await res1.json();
-    const permission = allData[selected];
-
-    const summaryDiv = document.getElementById("shared-summary");
-    const barSection = document.getElementById("shared-productivity-chart");
-    const pieSection = document.getElementById("shared-pie-chart");
-
-    summaryDiv.textContent = permission.summary.length ? "📘 Summary was shared." : "—";
-    barSection.style.display = permission.bar.length ? "block" : "none";
-    pieSection.style.display = permission.pie.length ? "block" : "none";
-
-    const res2 = await fetch(`/api/shared-chart-data?sender_email=${selected}`);
-    const result = await res2.json();
-
-    // Summary
-    if (permission.summary.length) {
-      const { totalHours, mostStudied, leastStudied } = result.summary;
-      summaryDiv.innerHTML = `
-        <strong>Summary:</strong><br>
-        📊 <strong>Total Hours:</strong> ${totalHours}<br>
-        🔝 <strong>Most Studied:</strong> ${mostStudied}<br>
-        🔻 <strong>Least Studied:</strong> ${leastStudied}
-      `;
-    } else {
-      summaryDiv.innerHTML = "— No summary shared.";
-    }
-
-    // Bar Chart
-    if (permission.bar.length) {
-      const ctx = document.getElementById("shared-productivity-canvas").getContext("2d");
-      if (sharedBarChart) sharedBarChart.destroy();
-      sharedBarChart = new Chart(ctx, {
-        type: "bar",
-        data: result.barChartData,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "top" }
-          },
-          scales: {
-            x: { stacked: true },
-            y: { stacked: true, beginAtZero: true }
+      // ✅ 渲染 summary 内容
+      if (permission.summary.length) {
+        const { totalHours, mostStudied, leastStudied } = result.summary;
+        summaryDiv.innerHTML = `
+          <strong>Summary:</strong><br>
+          📊 <strong>Total Hours:</strong> ${totalHours}<br>
+          🔝 <strong>Most Studied:</strong> ${mostStudied}<br>
+          🔻 <strong>Least Studied:</strong> ${leastStudied}
+        `;
+      }
+    
+      // ✅ 渲染柱状图（等 barSection 已可见）
+      if (permission.bar && permission.bar.length > 0) {
+        const canvas = document.getElementById("shared-productivity-canvas");
+        const ctx = canvas.getContext("2d");
+      
+        // ✅ 强制设置宽高
+        canvas.style.width = "100%";
+        canvas.style.height = "400px";
+        
+        if (sharedBarChart) sharedBarChart.destroy();
+      
+        sharedBarChart = new Chart(ctx, {
+          type: "bar",
+          data: result.barChartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: "top" }
+            },
+            scales: {
+              x: { stacked: true },
+              y: { stacked: true, beginAtZero: true }
+            }
           }
-        }
-      });
-    }
-
-    // Pie Chart
-    if (permission.pie.length) {
-      const ctx = document.getElementById("shared-pie-canvas").getContext("2d");
-      if (sharedPieChart) sharedPieChart.destroy();
-      sharedPieChart = new Chart(ctx, {
-        type: "pie",
-        data: result.pieChartData,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "bottom" }
+        });
+      
+        console.log("✅ Shared Bar Chart created.");
+      }
+    
+      // ✅ 渲染饼图
+      if (permission.pie.length) {
+        const ctx = document.getElementById("shared-pie-canvas").getContext("2d");
+        if (sharedPieChart) sharedPieChart.destroy();
+        sharedPieChart = new Chart(ctx, {
+          type: "pie",
+          data: result.pieChartData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: "bottom" }
+            }
           }
-        }
-      });
-    }
+        });
+      }
+    });
+    
   });
-});
 
 

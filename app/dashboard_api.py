@@ -220,37 +220,46 @@ def get_shared_chart_data():
 
     today = datetime.today().date()
     start_date = today - timedelta(days=6)
+
     sessions = StudySession.query.filter(
         StudySession.student_id == sender.id,
         StudySession.date >= start_date,
         StudySession.date <= today
     ).all()
 
+    # ✅ 初始化
     total_hours = 0
     subject_hours = defaultdict(int)
     bar_data = defaultdict(lambda: defaultdict(int))
     colors = {}
 
+    # ✅ 统一处理为字符串日期 key
     for s in sessions:
         total_hours += s.hours
         subject_hours[s.subject] += s.hours
-        bar_data[s.date][s.subject] += s.hours
+        date_str = s.date if isinstance(s.date, str) else s.date.strftime('%Y-%m-%d')
+        bar_data[date_str][s.subject] += s.hours
         if s.subject not in colors:
             colors[s.subject] = s.color or "#888"
 
-    subjects = list(subject_hours.keys())
+    # ✅ labels: 连续 7 天日期
     dates = [(start_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
+    subjects = list(subject_hours.keys())
+
+    # ✅ 构造 barChartData
     bar_chart_data = {
         "labels": dates,
         "datasets": [
             {
                 "label": subject,
-                "data": [bar_data.get(datetime.strptime(date, "%Y-%m-%d").date(), {}).get(subject, 0) for date in dates],
+                "data": [bar_data.get(date, {}).get(subject, 0) for date in dates],
                 "backgroundColor": colors.get(subject, "#ccc")
             }
             for subject in subjects
         ]
     }
+
+    # ✅ 构造 pieChartData（不用处理日期问题）
     pie_chart_data = {
         "labels": subjects,
         "datasets": [{
@@ -258,6 +267,8 @@ def get_shared_chart_data():
             "backgroundColor": [colors.get(subj, "#ccc") for subj in subjects]
         }]
     }
+
+    # ✅ 返回完整数据
     return jsonify({
         "summary": {
             "totalHours": total_hours,
@@ -267,6 +278,7 @@ def get_shared_chart_data():
         "barChartData": bar_chart_data,
         "pieChartData": pie_chart_data
     })
+
 
 
 

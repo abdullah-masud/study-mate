@@ -123,3 +123,21 @@ body {
   aspect-ratio: 1 / 1;     
 }
 
+#shared-productivity-chart {
+  max-height: 450px;
+  overflow: hidden;
+}
+
+.chart-container {
+  position: relative;
+  height: 400px;
+  max-width: 100%;
+}
+
+.chart-container canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100% !important;
+  width: 100% !important;
+}
