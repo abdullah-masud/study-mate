@@ -257,23 +257,59 @@
               </select>
             </div>
       
-            <div id="shared-summary" class="alert alert-info" role="alert">
-              No shared summary yet.
-            </div>
-      
-            <div id="shared-productivity-chart" class="card mb-3" style="display: none;">
-              <div class="card-body chart-container">
-                <h5>📈 Shared Productivity Chart</h5>
-                <canvas id="shared-productivity-canvas"></canvas>
+            <section class="row text-center mb-4" id="shared-summary-cards">
+              <div class="col-12 d-flex justify-content-between align-items-center mb-3">
+                <button id="prev-shared-week" class="btn btn-outline-secondary">⬅ Last Week</button>
+                <span id="shared-week-label" class="font-weight-bold text-primary">📅</span>
+                <button id="next-shared-week" class="btn btn-outline-secondary">Next Week ➡</button>
               </div>
-            </div>
+            
+              <article class="col-md-4">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h5>Total Hours</h5>
+                    <p id="shared-total-hours" class="display-4">0</p>
+                  </div>
+                </div>
+              </article>
+              <article class="col-md-4">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h5>Most Studied</h5>
+                    <p id="shared-most-subject" class="display-4">-</p>
+                  </div>
+                </div>
+              </article>
+              <article class="col-md-4">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h5>Least Studied</h5>
+                    <p id="shared-least-subject" class="display-4">-</p>
+                  </div>
+                </div>
+              </article>
+            </section>
+            
       
-            <div id="shared-pie-chart" class="card" style="display: none;">
+            <section class="card mb-4" id="shared-bar-chart-section" style="display: none;">
               <div class="card-body">
-                <h5>📊 Shared Subject Distribution</h5>
-                <canvas id="shared-pie-canvas"></canvas>
+                <h4>📈 Shared Productivity by Day</h4>
+                <div class="chart-container">
+                  <canvas id="shared-productivity-canvas"></canvas>
+                </div>
               </div>
-            </div>
+            </section>
+            
+      
+            <section class="card mb-4" id="shared-pie-chart-section" style="display: none;">
+              <div class="card-body">
+                <h4>📊 Shared Subject Distribution</h4>
+                <div class="chart-container">
+                  <canvas id="shared-pie-canvas"></canvas>
+                </div>
+              </div>
+            </section>
+            
           </div>
         </section>
       </div>

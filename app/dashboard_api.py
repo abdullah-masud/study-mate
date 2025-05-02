@@ -228,19 +228,28 @@ def get_received_shares():
 @dashboard_api.route('/api/shared-chart-data', methods=['GET'])
 def get_shared_chart_data():
     sender_email = request.args.get('sender_email')
+    start_str = request.args.get('start')
     current_user_id = session.get('id')
 
     sender = Student.query.filter_by(email=sender_email).first()
     if not sender:
         return jsonify({"error": "Sender not found"}), 404
 
-    today = datetime.today().date()
-    start_date = today - timedelta(days=6)
+    # ✅ 默认 start = 今天 -6 天；否则按传入解析
+    try:
+        if start_str:
+            start_date = datetime.strptime(start_str, "%Y-%m-%d").date()
+        else:
+            start_date = datetime.today().date() - timedelta(days=6)
+    except Exception as e:
+        return jsonify({"error": f"Invalid start date: {e}"}), 400
+
+    end_date = start_date + timedelta(days=6)
 
     sessions = StudySession.query.filter(
         StudySession.student_id == sender.id,
         StudySession.date >= start_date,
-        StudySession.date <= today
+        StudySession.date <= end_date
     ).all()
 
     # ✅ 初始化
@@ -249,7 +258,6 @@ def get_shared_chart_data():
     bar_data = defaultdict(lambda: defaultdict(int))
     colors = {}
 
-    # ✅ 统一处理为字符串日期 key
     for s in sessions:
         total_hours += s.hours
         subject_hours[s.subject] += s.hours
@@ -258,11 +266,9 @@ def get_shared_chart_data():
         if s.subject not in colors:
             colors[s.subject] = s.color or "#888"
 
-    # ✅ labels: 连续 7 天日期
     dates = [(start_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
     subjects = list(subject_hours.keys())
 
-    # ✅ 构造 barChartData
     bar_chart_data = {
         "labels": dates,
         "datasets": [
@@ -275,7 +281,6 @@ def get_shared_chart_data():
         ]
     }
 
-    # ✅ 构造 pieChartData（不用处理日期问题）
     pie_chart_data = {
         "labels": subjects,
         "datasets": [{
@@ -284,7 +289,6 @@ def get_shared_chart_data():
         }]
     }
 
-    # ✅ 返回完整数据
     return jsonify({
         "summary": {
             "totalHours": total_hours,
