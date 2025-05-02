@@ -2,9 +2,9 @@ let currentWeekStart = getStartOfWeek(new Date());
 
 // Unified initialisation after page load
 window.addEventListener("DOMContentLoaded", () => {
-  fetchSummary();
+  updateAllViews(0);
   fetchRecords();
-  renderProductivityChart();
+  
 
   flatpickr("#date", {
     dateFormat: "Y-m-d",
@@ -89,6 +89,17 @@ async function fetchSummary(startDate = currentWeekStart) {
     console.error("❌ Failed to get statistics：", error);
   }
 }
+
+
+function updateSummaryWeekLabel(startDate) {
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6);
+  document.getElementById("summary-week-label").textContent =
+    `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
+}
+
+
+
 
 async function fetchRecords() {
   try {
@@ -270,29 +281,27 @@ async function handleColorChange(subject, newColor) {
   }
 }
 
-function shiftWeek(offset) {
+function updateAllViews(offset) {
   const newStart = new Date(currentWeekStart);
   newStart.setDate(newStart.getDate() + 7 * offset);
   currentWeekStart = newStart;
+
+  // 更新全部视图
   fetchSummary(currentWeekStart);
   renderProductivityChart(currentWeekStart);
+  updateSummaryWeekLabel(currentWeekStart);
+  updateWeekLabel(currentWeekStart);
+  updatePieWeekLabel(currentWeekStart);
+  renderPieChart(currentWeekStart); // ✅ 你之前是单独写的 pie 渲染
 }
 
-document.getElementById("prev-week").addEventListener("click", () => shiftWeek(-1));
-document.getElementById("next-week").addEventListener("click", () => shiftWeek(1));
 
-
-// Handle date changes for pie charts
-document.getElementById("prev-pie-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-  renderPieChart(currentWeekStart);
-});
-
-document.getElementById("next-pie-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-  renderPieChart(currentWeekStart);
-});
-
+document.getElementById("prev-week").addEventListener("click", () => updateAllViews(-1));
+document.getElementById("next-week").addEventListener("click", () => updateAllViews(1));
+document.getElementById("prev-summary-week").addEventListener("click", () => updateAllViews(-1));
+document.getElementById("next-summary-week").addEventListener("click", () => updateAllViews(1));
+document.getElementById("prev-pie-week").addEventListener("click", () => updateAllViews(-1));
+document.getElementById("next-pie-week").addEventListener("click", () => updateAllViews(1));
 
 
 
@@ -324,6 +333,15 @@ async function renderPieChart(startDate = currentWeekStart) {
   renderPieChartFromWeekData(data);
   updatePieWeekLabel(startDate);
 }
+
+
+
+
+
+
+
+
+
 
 
 
