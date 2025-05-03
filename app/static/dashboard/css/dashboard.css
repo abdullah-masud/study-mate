@@ -128,4 +128,35 @@ body {
   overflow: hidden;
 }
 
+/* ✅ 小屏幕优化样式 */
+@media (max-width: 768px) {
+  /* 按钮与标签上下排列，不再左右对齐 */
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* 日期范围 label 居中 */
+  .font-weight-bold.text-primary {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  /* 修正图表宽度并防止压缩 */
+  .chart-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 10px;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Summary 数字适配屏幕，防止太大撑出容器 */
+  .display-4 {
+    font-size: 2rem;
+  }
+}
 

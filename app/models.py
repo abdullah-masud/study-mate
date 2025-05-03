@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
 from datetime import datetime
+from sqlalchemy import Float
 
 
 # Creating SQLAlchemy objects for database operations
@@ -12,7 +13,7 @@ class StudySession(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key, self incrementing ID
     date = db.Column(db.String(20), nullable=False)  # Learning Dates, String Format
     subject = db.Column(db.String(100), nullable=False)  # Study Subjects
-    hours = db.Column(db.Integer, nullable=False)  # Study hours
+    hours = db.Column(Float, nullable=False)  # Study hours
     color = db.Column(db.String(20), default="#888888")  # 🟡 Added: Record colour values (e.g. #36a2eb)
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)  # 👈 Link to Student

@@ -16,7 +16,7 @@ window.addEventListener("DOMContentLoaded", () => {
 document.getElementById("submit-btn").addEventListener("click", async () => {
   const date = document.getElementById("date").value;
   const subject = document.getElementById("subject").value;
-  const hours = parseInt(document.getElementById("hours").value, 10);
+  const hours = parseFloat(document.getElementById("hours").value);
   const color = document.getElementById("color").value;
   const userId = localStorage.getItem('user_id');
   

@@ -11,15 +11,16 @@ def add_session():
     data = request.get_json()
     date = data.get('date')
     subject = data.get('subject')
-    hours = data.get('hours')
+    hours = float(data.get("hours"))
     color = data.get('color')
 
     student_id = session.get('id')
     if not student_id:
         return jsonify({"error": "User not logged in"}), 401
 
-    if not date or not subject or not isinstance(hours, int):
+    if not date or not subject or not isinstance(hours, (int, float)) or hours is None:
         return jsonify({"error": "Invalid input data format."}), 400
+
 
     if hours <= 0 or hours > 24:
         return jsonify({"error": "Hours must be between 1 and 24."}), 400
