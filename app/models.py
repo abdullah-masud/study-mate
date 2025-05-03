@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
+import uuid
+import datetime
 
 # Creating SQLAlchemy objects for database operations
 db = SQLAlchemy()
@@ -49,3 +51,19 @@ class Student(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+
+# The password reset token model class, corresponding to the password_reset_token table in the database.
+# This class is used to store password reset tokens for users.
+class PasswordResetToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(100), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    expiry = db.Column(db.DateTime, nullable=False)
+
+    user = db.relationship('Student', backref='reset_tokens')
+
+    def __init__(self, user_id):
+        self.token = str(uuid.uuid4())
+        self.user_id = user_id
+        self.expiry = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)  # Valid for 30 mins
