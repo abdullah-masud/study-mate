@@ -462,5 +462,39 @@ function formatDate(date) {
   return date.toISOString().split("T")[0];
 }
 
+// ✅ Share Modal 逻辑
+const shareBtn = document.getElementById("confirm-share");
+if (shareBtn) {
+  shareBtn.addEventListener("click", async () => {
+    const recipientEmail = document.getElementById("receiver-email")?.value.trim();
+    const shareSummary = document.getElementById("share-summary")?.checked;
+    const shareBar = document.getElementById("share-productivity")?.checked;
+    const sharePie = document.getElementById("share-piechart")?.checked;
+
+    if (!recipientEmail) {
+      alert("Please enter a recipient email.");
+      return;
+    }
+
+    const response = await fetch("/api/share-record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        recipient_email: recipientEmail,
+        share_summary: shareSummary,
+        share_bar: shareBar,
+        share_pie: sharePie
+      })
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert("🎉 Shared successfully!");
+      document.getElementById("shareModal")?.querySelector(".close")?.click();
+    } else {
+      alert("❌ Error: " + result.error);
+    }
+  });
+}
 
 
