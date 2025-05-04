@@ -560,3 +560,18 @@ if (shareBtn) {
 }
 
 
+let lastScrollY = window.scrollY;
+
+window.addEventListener("scroll", () => {
+  const navbar = document.querySelector(".navbar");
+
+  if (window.scrollY > lastScrollY) {
+    // 向下滚动
+    navbar.classList.add("hide");
+  } else {
+    // 向上滚动
+    navbar.classList.remove("hide");
+  }
+
+  lastScrollY = window.scrollY;
+});

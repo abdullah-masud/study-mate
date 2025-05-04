@@ -97,6 +97,7 @@ body {
 #productivity-chart,
 #weekly-pie-chart {
   max-width: 100%;
+  transform: scale(0.9);
   height: auto;
 }
 
@@ -198,4 +199,21 @@ body {
   .my-pie-chart-container {
     max-width: 100%;
   }
+}
+
+
+
+
+
+/* 默认 header 显示 */
+.navbar {
+  transition: top 0.3s ease-in-out;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* 向下滚动时隐藏 */
+.navbar.hide {
+  top: -130px; /* 根据 navbar 高度调整，70px~100px 通常足够 */
 }
