@@ -1,6 +1,10 @@
 from flask import Blueprint, render_template
 from flask import request, redirect, url_for, flash, session
 from app.models import db, Student, StudySession
+from app.utils import isPasswordComplex
+from app.models import PasswordResetToken
+import uuid
+import datetime
 
 
 home_bp = Blueprint('home', __name__)
@@ -48,10 +52,17 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
-        # Check if user already exists
-        if Student.query.filter((Student.username == username) | (Student.email == email)).first():
+        # Validate password complexity
+        valid, message = isPasswordComplex(password)
+        if not valid:
+            flash(message, 'danger')
+            return render_template('auth/signup.html')
+
+         # Check if user already exists
+        existing_user = Student.query.filter((Student.username == username) | (Student.email == email)).first()
+        if existing_user:
             flash('Username or email already exists.', 'warning')
-            return redirect(url_for('home.signup'))
+            return redirect(url_for('home.signup'))  # This ensures the message is shown only on the signup page.
 
         # Create new user
         new_user = Student(username=username, email=email)
@@ -71,3 +82,56 @@ def logout():
     session.clear()
     flash('You have been logged out.', 'info')
     return redirect(url_for('home.login'))
+
+@home_bp.route('/forgotPassword', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = Student.query.filter_by(email=email).first()
+
+        if user:
+            # Create and save token
+            token_entry = PasswordResetToken(user_id=user.id)
+            db.session.add(token_entry)
+            db.session.commit()
+
+            # Redirect with token
+            flash('Reset token created. Reset your password now.', 'info')
+            return redirect(url_for('home.reset_password', token=token_entry.token))
+
+        flash('If the email exists, a reset link is generated.', 'info')
+
+    return render_template('auth/forgotPassword.html')
+
+@home_bp.route('/resetPassword/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    token_entry = PasswordResetToken.query.filter_by(token=token).first()
+
+    if not token_entry or token_entry.expiry < datetime.datetime.utcnow():
+        flash('Invalid or expired token.', 'danger')
+        return redirect(url_for('home.forgot_password'))
+
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm = request.form['confirm_password']
+
+        valid, message = isPasswordComplex(password)
+        if not valid:
+            flash(message, 'danger')
+            return render_template('auth/resetPassword.html', token=token)
+
+        if password != confirm:
+            flash("Passwords do not match.", "danger")
+            return render_template('auth/resetPassword.html', token=token)
+
+        user = token_entry.user
+        user.set_password(password)
+        db.session.delete(token_entry)  # Remove token
+        db.session.commit()
+
+        flash("Password updated successfully!", "success")
+        return redirect(url_for('home.login'))
+
+    return render_template('auth/resetPassword.html', token=token)
+
+

@@ -1,9 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
+<<<<<<< HEAD
 from datetime import datetime
 from sqlalchemy import Float
 
+=======
+import uuid
+import datetime
+>>>>>>> feature/password-security
 
 # Creating SQLAlchemy objects for database operations
 db = SQLAlchemy()
@@ -33,6 +38,7 @@ class Student(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
+    password_history = db.Column(db.JSON, default=[])
 
     sessions = db.relationship('StudySession', backref='student', lazy=True)  # 👈 Relationship
 
@@ -53,6 +59,7 @@ class Student(db.Model):
         return f'<User {self.username}>'
     
 
+
 class ShareRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -71,3 +78,18 @@ class ShareRecord(db.Model):
 
     def __repr__(self):
         return f'<ShareRecord from {self.sender_id} to {self.recipient_id}>'
+
+# The password reset token model class, corresponding to the password_reset_token table in the database.
+class PasswordResetToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(100), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    expiry = db.Column(db.DateTime, nullable=False)
+
+    user = db.relationship('Student', backref='reset_tokens')
+
+    def __init__(self, user_id):
+        self.token = str(uuid.uuid4())
+        self.user_id = user_id
+        self.expiry = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)  # Valid for 30 mins
+
