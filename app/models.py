@@ -1,14 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
-<<<<<<< HEAD
 from datetime import datetime
 from sqlalchemy import Float
-
-=======
 import uuid
-import datetime
->>>>>>> feature/password-security
+
+
 
 # Creating SQLAlchemy objects for database operations
 db = SQLAlchemy()
