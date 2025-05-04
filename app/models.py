@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
-from datetime import datetime
+from datetime import datetime, timedelta 
 from sqlalchemy import Float
 import uuid
 
@@ -88,5 +88,5 @@ class PasswordResetToken(db.Model):
     def __init__(self, user_id):
         self.token = str(uuid.uuid4())
         self.user_id = user_id
-        self.expiry = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)  # Valid for 30 mins
+        self.expiry = datetime.utcnow() + timedelta(minutes=30) # Valid for 30 mins
 
