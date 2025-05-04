@@ -324,6 +324,44 @@ def get_shared_chart_data():
     })
 
 
+@dashboard_api.route('/api/sent-shares', methods=['GET'])
+def get_sent_shares():
+    sender_id = session.get('id')
+    shares = ShareRecord.query.filter_by(sender_id=sender_id).all()
+    result = []
+    for share in shares:
+        result.append({
+            "id": share.id,
+            "recipient_email": share.recipient.email,
+            "summary": share.share_summary,
+            "bar": share.share_bar,
+            "pie": share.share_pie,
+            
+        })
+    return jsonify(result)
+
+
+@dashboard_api.route('/api/delete-share/<int:share_id>', methods=['DELETE'])
+def delete_share(share_id):
+    record = ShareRecord.query.get_or_404(share_id)
+    if record.sender_id != session.get('id'):
+        return jsonify({"error": "Not authorized"}), 403
+    db.session.delete(record)
+    db.session.commit()
+    return jsonify({"message": "Share record deleted"})
+
+@dashboard_api.route('/api/update-share/<int:share_id>', methods=['PUT'])
+def update_share(share_id):
+    data = request.get_json()
+    record = ShareRecord.query.get_or_404(share_id)
+    if record.sender_id != session.get('id'):
+        return jsonify({"error": "Not authorized"}), 403
+
+    record.share_summary = data.get("share_summary", record.share_summary)
+    record.share_bar = data.get("share_bar", record.share_bar)
+    record.share_pie = data.get("share_pie", record.share_pie)
+    db.session.commit()
+    return jsonify({"message": "Share record updated"})
 
 
 

@@ -4,6 +4,7 @@ let currentWeekStart = getStartOfWeek(new Date());
 window.addEventListener("DOMContentLoaded", () => {
   updateAllViews(0);
   fetchRecords();
+  loadSentShares();
   
 
   flatpickr("#date", {
@@ -575,3 +576,74 @@ window.addEventListener("scroll", () => {
 
   lastScrollY = window.scrollY;
 });
+
+async function loadSentShares() {
+  const res = await fetch("/api/sent-shares");
+  const data = await res.json();
+  const table = document.getElementById("my-shared-table");
+
+  if (!data.length) {
+    table.innerHTML = "<tr><td colspan='6'>No shares yet.</td></tr>";
+    return;
+  }
+
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Recipient</th><th>Summary</th><th>Bar</th><th>Pie</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data.map(r => `
+        <tr>
+          <td>${r.recipient_email}</td>
+          <td>${r.summary ? "✅" : "❌"}</td>
+          <td>${r.bar ? "✅" : "❌"}</td>
+          <td>${r.pie ? "✅" : "❌"}</td>
+          
+          <td>
+            <button class="btn btn-sm btn-danger" onclick="deleteShare(${r.id})">🗑️</button>
+            <button class="btn btn-sm btn-info" onclick="openEditShare(${r.id}, ${r.summary}, ${r.bar}, ${r.pie})">✏️</button>
+          </td>
+        </tr>
+      `).join("")}
+    </tbody>
+  `;
+}
+
+
+async function deleteShare(id) {
+  if (!confirm("Are you sure to revoke this share?")) return;
+  const res = await fetch(`/api/delete-share/${id}`, { method: "DELETE" });
+  const result = await res.json();
+  alert(result.message);
+  loadSentShares();
+}
+
+function openEditShare(id, summary, bar, pie) {
+  document.getElementById("edit-share-id").value = id;
+  document.getElementById("edit-share-summary").checked = summary;
+  document.getElementById("edit-share-bar").checked = bar;
+  document.getElementById("edit-share-pie").checked = pie;
+  $('#editShareModal').modal('show');
+}
+
+async function submitEditShare() {
+  const id = document.getElementById("edit-share-id").value;
+  const body = {
+    share_summary: document.getElementById("edit-share-summary").checked,
+    share_bar: document.getElementById("edit-share-bar").checked,
+    share_pie: document.getElementById("edit-share-pie").checked
+  };
+
+  const res = await fetch(`/api/update-share/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  const result = await res.json();
+  alert(result.message);
+  $('#editShareModal').modal('hide');
+  loadSentShares();
+}

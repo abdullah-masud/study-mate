@@ -186,6 +186,74 @@
       <button class="btn btn-primary" data-toggle="modal" data-target="#shareModal">📤 Share</button>
     </div>
 
+    <section class="card">
+      <div class="card-body">
+        <h5 class="mb-3">📤 My Shared Records</h5>
+    
+        <!-- 表格容器（加上 overflow-x 自动响应） -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover text-center align-middle" id="my-shared-table">
+            <thead class="thead-light">
+              <tr>
+                <th>Recipient</th>
+                <th>Summary</th>
+                <th>Bar</th>
+                <th>Pie</th>
+                
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- JS 中插入 <tr> 数据 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 编辑弹窗 Modal -->
+<div class="modal fade" id="editShareModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title">✏️ Edit Share</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <form id="edit-share-form">
+          <input type="hidden" id="edit-share-id">
+          
+          <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" id="edit-share-summary">
+            <label for="edit-share-summary" class="form-check-label">📘 Summary</label>
+          </div>
+
+          <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" id="edit-share-bar">
+            <label for="edit-share-bar" class="form-check-label">📊 Bar Chart</label>
+          </div>
+
+          <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" id="edit-share-pie">
+            <label for="edit-share-pie" class="form-check-label">🥧 Pie Chart</label>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" onclick="submitEditShare()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
     <!-- 📤 Modal: Share Study Insights -->
 <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
