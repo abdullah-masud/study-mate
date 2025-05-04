@@ -417,23 +417,85 @@ async function updateSharedViews(offset) {
   document.getElementById("shared-least-subject").textContent = leastStudied || "-";
 
   // ✅ 渲染柱状图
-  if (sharedBarChart) sharedBarChart.destroy();
-  const ctxBar = document.getElementById("shared-productivity-canvas").getContext("2d");
-  sharedBarChart = new Chart(ctxBar, {
-    type: "bar",
-    data: data.barChartData,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: "top" }
+  
+    // ✅ 构建最近 7 天的日期标签
+const recentDates = [];
+for (let i = 0; i < 7; i++) {
+  const d = new Date(currentSharedStartDate);
+  d.setDate(d.getDate() + i);
+  recentDates.push(formatDate(d));
+}
+
+// ✅ 提取所有出现过的学科
+const subjectsSet = new Set();
+recentDates.forEach(date => {
+  const dayData = data.rawData?.[date];
+  if (dayData) {
+    Object.keys(dayData).forEach(subject => subjectsSet.add(subject));
+  }
+});
+const subjects = Array.from(subjectsSet);
+
+// ✅ 构建 datasets
+const datasets = subjects.map(subject => ({
+  label: subject,
+  data: recentDates.map(date => data.rawData?.[date]?.[subject]?.hours || 0),
+  backgroundColor: data.rawData?.[recentDates.find(d => data.rawData[d]?.[subject])]?.[subject]?.color || "#888888"
+}));
+
+// ✅ 销毁旧图表
+if (sharedBarChart) sharedBarChart.destroy();
+
+// ✅ 绘制新图表
+const ctxBar = document.getElementById("shared-productivity-canvas").getContext("2d");
+sharedBarChart = new Chart(ctxBar, {
+  type: "bar",
+  data: {
+    labels: recentDates,
+    datasets: datasets
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: { size: 14 }
+        }
       },
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true }
+      tooltip: {
+        mode: "index",
+        intersect: false
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          autoSkip: false,
+          maxRotation: 45,
+          minRotation: 0,
+          font: { size: 12 }
+        }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Hours Studied",
+          font: { size: 14 }
+        },
+        ticks: {
+          font: { size: 12 }
+        }
       }
     }
-  });
+  }
+});
+
+  
 
   // ✅ 渲染饼图
   if (sharedPieChart) sharedPieChart.destroy();

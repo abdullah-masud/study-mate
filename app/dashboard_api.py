@@ -253,19 +253,41 @@ def get_shared_chart_data():
         StudySession.date <= end_date
     ).all()
 
-    # ✅ 初始化
+        # ✅ 统计总小时、科目小时数、颜色
     total_hours = 0
     subject_hours = defaultdict(int)
     bar_data = defaultdict(lambda: defaultdict(int))
     colors = {}
 
+    # ✅ 提取所有出现过的科目
+    all_subjects = set(s.subject for s in sessions)
+
+    # ✅ 初始化 raw_data 为每天都有所有科目的结构
+    raw_data = {}
+    for i in range(7):
+        day_obj = start_date + timedelta(days=i)
+        date_str = day_obj.strftime('%Y-%m-%d')
+        raw_data[date_str] = {}
+
+        for subject in all_subjects:
+            # 查找该科目的颜色（只找一次）
+            if subject not in colors:
+                subject_color = next((s.color or "#888" for s in sessions if s.subject == subject), "#888")
+                colors[subject] = subject_color
+            raw_data[date_str][subject] = {
+                "hours": 0,
+                "color": colors[subject]
+            }
+
+    # ✅ 填入实际数据
     for s in sessions:
         total_hours += s.hours
         subject_hours[s.subject] += s.hours
-        date_str = s.date if isinstance(s.date, str) else s.date.strftime('%Y-%m-%d')
+        date_str = s.date.strftime('%Y-%m-%d') if not isinstance(s.date, str) else s.date
         bar_data[date_str][s.subject] += s.hours
-        if s.subject not in colors:
-            colors[s.subject] = s.color or "#888"
+        raw_data[date_str][s.subject]["hours"] += s.hours
+
+
 
     dates = [(start_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
     subjects = list(subject_hours.keys())
@@ -297,7 +319,8 @@ def get_shared_chart_data():
             "leastStudied": min(subject_hours, key=subject_hours.get) if subject_hours else "-"
         },
         "barChartData": bar_chart_data,
-        "pieChartData": pie_chart_data
+        "pieChartData": pie_chart_data,
+        "rawData": raw_data  # ✅ 前端可以用它构建和 MyData 一致的图表
     })
 
 

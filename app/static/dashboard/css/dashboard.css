@@ -110,23 +110,9 @@ body {
   }
 }
 
-.chart-container {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1; /* ✅ 保持正方形比例 */
-}
 
-.chart-container canvas {
-  width: 100% !important;
-  height: auto !important;
-}
 
-#shared-productivity-chart {
-  max-height: 450px;
-  overflow: hidden;
-}
+
 
 /* ✅ 小屏幕优化样式 */
 @media (max-width: 768px) {
@@ -142,12 +128,6 @@ body {
     text-align: center;
   }
 
-  /* 修正图表宽度并防止压缩 */
-  .chart-container {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 10px;
-  }
 
   canvas {
     width: 100% !important;
@@ -160,3 +140,62 @@ body {
   }
 }
 
+/* 🟦 Shared Productivity 柱状图专属容器 */
+.shared-bar-chart-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 10px;
+}
+
+.shared-bar-chart-container canvas {
+  min-width: 600px;
+  height: 320px !important;
+  max-width: none;
+}
+
+/* 🟧 Shared Pie Chart 专属容器（保持正方形） */
+.shared-pie-chart-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+}
+
+.shared-pie-chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* ✅ 可选：限制小屏图表滚动条不影响整体布局 */
+@media (max-width: 768px) {
+  .shared-bar-chart-container {
+    padding: 0 5px;
+  }
+
+  .shared-pie-chart-container {
+    max-width: 100%;
+  }
+
+  .shared-bar-chart-container canvas {
+    min-width: 500px;
+  }
+}
+
+.my-pie-chart-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+}
+
+.my-pie-chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* 小屏适配 */
+@media (max-width: 768px) {
+  .my-pie-chart-container {
+    max-width: 100%;
+  }
+}
