@@ -54,7 +54,6 @@ class Student(db.Model):
     
 
 # The password reset token model class, corresponding to the password_reset_token table in the database.
-# This class is used to store password reset tokens for users.
 class PasswordResetToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(100), unique=True, nullable=False)
