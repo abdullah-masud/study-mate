@@ -182,7 +182,7 @@ def update_color_by_subject(subject):
 
 
 
-# ========== 分享功能 ==========
+# ========== Share function ==========
 @dashboard_api.route('/api/share-record', methods=['POST'])
 def share_record():
     data = request.get_json()
@@ -196,6 +196,12 @@ def share_record():
     if not recipient:
         return jsonify({"error": "Recipient not found"}), 404
 
+    # ✅ Check if it has been shared to this email address
+    existing = ShareRecord.query.filter_by(sender_id=sender_id, recipient_id=recipient.id).first()
+    if existing:
+        return jsonify({"error": "You’ve already shared with this user. Please update or delete the existing record."}), 400
+
+    # ✅ Otherwise add a new record
     record = ShareRecord(
         sender_id=sender_id,
         recipient_id=recipient.id,
@@ -206,6 +212,8 @@ def share_record():
     db.session.add(record)
     db.session.commit()
     return jsonify({"message": "Record shared successfully!"})
+
+
 
 
 @dashboard_api.route('/api/received-shares', methods=['GET'])
@@ -236,7 +244,7 @@ def get_shared_chart_data():
     if not sender:
         return jsonify({"error": "Sender not found"}), 404
 
-    # ✅ 默认 start = 今天 -6 天；否则按传入解析
+    # ✅ Default start = today -6 days; otherwise parsed as passed in
     try:
         if start_str:
             start_date = datetime.strptime(start_str, "%Y-%m-%d").date()
@@ -253,16 +261,16 @@ def get_shared_chart_data():
         StudySession.date <= end_date
     ).all()
 
-        # ✅ 统计总小时、科目小时数、颜色
+        # ✅ Statistics on total hours, subject hours, colour
     total_hours = 0
     subject_hours = defaultdict(int)
     bar_data = defaultdict(lambda: defaultdict(int))
     colors = {}
 
-    # ✅ 提取所有出现过的科目
+    # ✅ Extract all occurrences of the subject
     all_subjects = set(s.subject for s in sessions)
 
-    # ✅ 初始化 raw_data 为每天都有所有科目的结构
+    # ✅ Initialise raw_data to have a structure with all subjects every day
     raw_data = {}
     for i in range(7):
         day_obj = start_date + timedelta(days=i)
@@ -270,7 +278,7 @@ def get_shared_chart_data():
         raw_data[date_str] = {}
 
         for subject in all_subjects:
-            # 查找该科目的颜色（只找一次）
+            # Find the colour of the subject (only once)
             if subject not in colors:
                 subject_color = next((s.color or "#888" for s in sessions if s.subject == subject), "#888")
                 colors[subject] = subject_color
@@ -279,7 +287,7 @@ def get_shared_chart_data():
                 "color": colors[subject]
             }
 
-    # ✅ 填入实际数据
+    # ✅ Fill in the actual data
     for s in sessions:
         total_hours += s.hours
         subject_hours[s.subject] += s.hours
@@ -320,10 +328,48 @@ def get_shared_chart_data():
         },
         "barChartData": bar_chart_data,
         "pieChartData": pie_chart_data,
-        "rawData": raw_data  # ✅ 前端可以用它构建和 MyData 一致的图表
+        "rawData": raw_data  # ✅ The front-end can use it to build charts that are consistent with MyData.
     })
 
 
+@dashboard_api.route('/api/sent-shares', methods=['GET'])
+def get_sent_shares():
+    sender_id = session.get('id')
+    shares = ShareRecord.query.filter_by(sender_id=sender_id).all()
+    result = []
+    for share in shares:
+        result.append({
+            "id": share.id,
+            "recipient_email": share.recipient.email,
+            "summary": share.share_summary,
+            "bar": share.share_bar,
+            "pie": share.share_pie,
+            
+        })
+    return jsonify(result)
+
+
+@dashboard_api.route('/api/delete-share/<int:share_id>', methods=['DELETE'])
+def delete_share(share_id):
+    record = ShareRecord.query.get_or_404(share_id)
+    if record.sender_id != session.get('id'):
+        return jsonify({"error": "Not authorized"}), 403
+    db.session.delete(record)
+    db.session.commit()
+    return jsonify({"message": "Share record deleted"})
+
+@dashboard_api.route('/api/update-share/<int:share_id>', methods=['PUT'])
+def update_share(share_id):
+    data = request.get_json()
+    record = ShareRecord.query.get_or_404(share_id)
+    if record.sender_id != session.get('id'):
+        return jsonify({"error": "Not authorized"}), 403
+
+    record.share_summary = data.get("share_summary", record.share_summary)
+    record.share_bar = data.get("share_bar", record.share_bar)
+    record.share_pie = data.get("share_pie", record.share_pie)
+    db.session.commit()
+    return jsonify({"message": "Share record updated"})
 
 
 

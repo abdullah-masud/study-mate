@@ -4,6 +4,7 @@ let currentWeekStart = getStartOfWeek(new Date());
 window.addEventListener("DOMContentLoaded", () => {
   updateAllViews(0);
   fetchRecords();
+  loadSentShares();
   
 
   flatpickr("#date", {
@@ -27,12 +28,12 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
   };
 
   if (!isValidDate(date)) {
-    alert("请输入有效的日期（格式：YYYY-MM-DD）！");
+    alert("Please enter a valid date (format: YYYY-MM-DD)!");
     return;
   }
 
   if (!date || !subject || isNaN(hours)) {
-    alert("请填写所有字段！");
+    alert("Please complete all fields!");
     return;
   }
 
@@ -49,11 +50,11 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
     try {
       result = await response.json();
     } catch (e) {
-      console.warn("⚠️ JSON 解析失败：", e);
+      console.warn("⚠️ JSON parsing failed:", e);
     }
 
     if (response.ok) {
-      alert(result.message || "添加成功！");
+      alert(result.message || "Add successfully！");
       
       // ✅ Manually clear form fields
       document.getElementById("date").value = "";
@@ -286,13 +287,13 @@ function updateAllViews(offset) {
   newStart.setDate(newStart.getDate() + 7 * offset);
   currentWeekStart = newStart;
 
-  // 更新全部视图
+  // Update All Views
   fetchSummary(currentWeekStart);
   renderProductivityChart(currentWeekStart);
   updateSummaryWeekLabel(currentWeekStart);
   updateWeekLabel(currentWeekStart);
   updatePieWeekLabel(currentWeekStart);
-  renderPieChart(currentWeekStart); // ✅ 你之前是单独写的 pie 渲染
+  renderPieChart(currentWeekStart); 
 }
 
 
@@ -345,18 +346,18 @@ async function renderPieChart(startDate = currentWeekStart) {
 
 
 
-// ✅ 全局变量
+// ✅ global variable
 let sharedBarChart = null;
 let sharedPieChart = null;
 let currentSharedSender = null;
 let currentSharedStartDate = getStartOfWeek(new Date());
 
-// ✅ 注册 DOMContentLoaded
+// ✅ Register DOMContentLoaded
 window.addEventListener("DOMContentLoaded", () => {
   const senderSelect = document.getElementById("sender-select");
   if (!senderSelect) return;
 
-  // ✅ 加载可选发送者
+  // ✅ Load optional senders
   fetch("/api/received-shares")
     .then(res => res.json())
     .then(data => {
@@ -368,7 +369,7 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-  // ✅ 切换 sender 时加载共享数据
+  // ✅ Loading shared data when switching senders
   senderSelect.addEventListener("change", async (e) => {
     const selected = e.target.value;
     if (!selected) return;
@@ -377,11 +378,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const allData = await res1.json();
     const permission = allData[selected];
 
-    // ✅ 设置当前 sender 和重置日期
+    // ✅ Set the current sender and reset date
     currentSharedSender = selected;
     currentSharedStartDate = getStartOfWeek(new Date());
 
-    // ✅ 控制区域可见性
+    // ✅ Control area visibility
     document.getElementById("shared-summary-cards").style.display = permission.summary.length ? "flex" : "none";
     document.getElementById("shared-bar-chart-section").style.display = permission.bar.length ? "block" : "none";
     document.getElementById("shared-pie-chart-section").style.display = permission.pie.length ? "block" : "none";
@@ -389,12 +390,12 @@ window.addEventListener("DOMContentLoaded", () => {
     updateSharedViews(0);
   });
 
-  // ✅ 周切换按钮绑定
+  // ✅ Weekly Switch Button Binding
   document.getElementById("prev-shared-week").addEventListener("click", () => updateSharedViews(-1));
   document.getElementById("next-shared-week").addEventListener("click", () => updateSharedViews(1));
 });
 
-// ✅ 主函数：切换周并更新所有视图
+// ✅ Main function: switch weeks and update all views
 async function updateSharedViews(offset) {
   if (!currentSharedSender) return;
 
@@ -406,19 +407,19 @@ async function updateSharedViews(offset) {
   end.setDate(end.getDate() + 6);
   document.getElementById("shared-week-label").textContent = `${formatDate(newStart)} ~ ${formatDate(end)}`;
 
-  // ✅ 拉取共享数据
+  // ✅ Pulling shared data
   const res = await fetch(`/api/shared-chart-data?sender_email=${currentSharedSender}&start=${formatDate(newStart)}`);
   const data = await res.json();
 
-  // ✅ 渲染 Summary
+  // ✅ Rendering summary cards
   const { totalHours, mostStudied, leastStudied } = data.summary;
   document.getElementById("shared-total-hours").textContent = totalHours || 0;
   document.getElementById("shared-most-subject").textContent = mostStudied || "-";
   document.getElementById("shared-least-subject").textContent = leastStudied || "-";
 
-  // ✅ 渲染柱状图
+  // ✅ Rendering Bar Charts
   
-    // ✅ 构建最近 7 天的日期标签
+    // ✅ Build date labels for the last 7 days
 const recentDates = [];
 for (let i = 0; i < 7; i++) {
   const d = new Date(currentSharedStartDate);
@@ -426,7 +427,7 @@ for (let i = 0; i < 7; i++) {
   recentDates.push(formatDate(d));
 }
 
-// ✅ 提取所有出现过的学科
+// ✅ Extract all occurrences of the discipline
 const subjectsSet = new Set();
 recentDates.forEach(date => {
   const dayData = data.rawData?.[date];
@@ -436,17 +437,17 @@ recentDates.forEach(date => {
 });
 const subjects = Array.from(subjectsSet);
 
-// ✅ 构建 datasets
+// ✅ Build datasets for each discipline
 const datasets = subjects.map(subject => ({
   label: subject,
   data: recentDates.map(date => data.rawData?.[date]?.[subject]?.hours || 0),
   backgroundColor: data.rawData?.[recentDates.find(d => data.rawData[d]?.[subject])]?.[subject]?.color || "#888888"
 }));
 
-// ✅ 销毁旧图表
+// ✅ Destruction of old charts
 if (sharedBarChart) sharedBarChart.destroy();
 
-// ✅ 绘制新图表
+// ✅ Plotting new charts
 const ctxBar = document.getElementById("shared-productivity-canvas").getContext("2d");
 sharedBarChart = new Chart(ctxBar, {
   type: "bar",
@@ -497,7 +498,7 @@ sharedBarChart = new Chart(ctxBar, {
 
   
 
-  // ✅ 渲染饼图
+  // ✅ rendering pie chart
   if (sharedPieChart) sharedPieChart.destroy();
   const ctxPie = document.getElementById("shared-pie-canvas").getContext("2d");
   sharedPieChart = new Chart(ctxPie, {
@@ -512,7 +513,7 @@ sharedBarChart = new Chart(ctxBar, {
   });
 }
 
-// ✅ 工具函数
+// ✅ instrumental function
 function getStartOfWeek(date) {
   const d = new Date(date);
   const day = d.getDay();
@@ -524,7 +525,7 @@ function formatDate(date) {
   return date.toISOString().split("T")[0];
 }
 
-// ✅ Share Modal 逻辑
+// ✅ Share Modal 
 const shareBtn = document.getElementById("confirm-share");
 if (shareBtn) {
   shareBtn.addEventListener("click", async () => {
@@ -553,6 +554,7 @@ if (shareBtn) {
     if (response.ok) {
       alert("🎉 Shared successfully!");
       document.getElementById("shareModal")?.querySelector(".close")?.click();
+      loadSentShares(); 
     } else {
       alert("❌ Error: " + result.error);
     }
@@ -566,12 +568,80 @@ window.addEventListener("scroll", () => {
   const navbar = document.querySelector(".navbar");
 
   if (window.scrollY > lastScrollY) {
-    // 向下滚动
+    
     navbar.classList.add("hide");
   } else {
-    // 向上滚动
+    
     navbar.classList.remove("hide");
   }
 
   lastScrollY = window.scrollY;
 });
+
+async function loadSentShares() {
+  const res = await fetch("/api/sent-shares");
+  const data = await res.json();
+  const tbody = document.querySelector("#my-shared-table tbody");
+
+  if (!tbody) return;
+
+  if (!data.length) {
+    tbody.innerHTML = "<tr><td colspan='5'>No shares yet.</td></tr>";
+    return;
+  }
+
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${r.recipient_email}</td>
+      <td>${r.summary ? "✅" : "❌"}</td>
+      <td>${r.bar ? "✅" : "❌"}</td>
+      <td>${r.pie ? "✅" : "❌"}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" onclick="deleteShare(${r.id})">🗑️</button>
+        <button class="btn btn-sm btn-info" onclick="openEditShare(${r.id}, ${r.summary}, ${r.bar}, ${r.pie})">✏️</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+
+
+async function deleteShare(id) {
+  if (!confirm("Are you sure to revoke this share?")) return;
+  const res = await fetch(`/api/delete-share/${id}`, { method: "DELETE" });
+  const result = await res.json();
+  alert(result.message);
+  loadSentShares();
+}
+
+function openEditShare(id, summary, bar, pie) {
+  document.getElementById("edit-share-id").value = id;
+  document.getElementById("edit-share-summary").checked = summary;
+  document.getElementById("edit-share-bar").checked = bar;
+  document.getElementById("edit-share-pie").checked = pie;
+  $('#editShareModal').modal('show');
+}
+
+async function submitEditShare() {
+  const id = document.getElementById("edit-share-id").value;
+  const body = {
+    share_summary: document.getElementById("edit-share-summary").checked,
+    share_bar: document.getElementById("edit-share-bar").checked,
+    share_pie: document.getElementById("edit-share-pie").checked
+  };
+
+  const res = await fetch(`/api/update-share/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  const result = await res.json();
+  alert(result.message);
+  $('#editShareModal').modal('hide');
+  loadSentShares();
+}
+
+if (!response.ok && result.error.includes("already shared")) {
+  alert("⚠️ You’ve already shared with this user. Please update or delete the existing record instead.");
+}
