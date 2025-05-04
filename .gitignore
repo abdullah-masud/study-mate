@@ -26,3 +26,5 @@ __pycache__/
 # Ignore dataset files
 .env
   
+.DS_Store
+instance/*.db

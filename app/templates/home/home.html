@@ -54,10 +54,12 @@
                             <li class="nav-item active">
                                 <a class="nav-link" href="{{ url_for('home.home') }}">Home</a>
                             </li>
+
                             <!-- About Link -->
                             <li class="nav-item">
                             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">About</a>
                             </li>
+                            
                             <!-- Contact Link -->
                             {% if session.get('username') %}
                             <li class="nav-item">
@@ -115,7 +117,11 @@
                         allowing you to concentrate on mastering the material instead of organizing data.</p>
                     <!-- Buttons for user actions -->
                     <div class="button-group">
+
                         <a href="main.html" class="btn btn-primary">Get Started</a>
+
+                        <a href="{{ url_for('home.login') }}" class="btn btn-primary">Get Started</a>
+
                         <a href="#" class="btn btn-secondary">Learn More</a>
                     </div>
                 </div>
@@ -193,8 +199,8 @@
         <div class="container">
             <div class="row align-items-center">
                 <!-- Left: Image -->
-                <div class="col-md-6 mb-4 mb-md-0 animate-fade slide-left">
-                    <img src="static/images/study-tracker-screenshot.png" alt="Study Tracker UI"
+                <div class="col-md-6 mb-4 mb-md-0 animate-fade slide-left image-column">
+                    <img src="{{ url_for('static', filename='images/sharedata.png') }}" alt="Shared With Me Screenshot"
                         class="img-fluid shadow-lg rounded-lg">
                 </div>
 
