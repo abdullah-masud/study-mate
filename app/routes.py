@@ -3,6 +3,7 @@ from flask import request, redirect, url_for, flash, session
 from app.models import db, Student, StudySession
 
 
+
 home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/')
