@@ -6,7 +6,6 @@ from app.models import PasswordResetToken
 import uuid
 import datetime
 
-
 home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/')
@@ -40,7 +39,6 @@ def login():
              flash('Invalid email or password.', 'danger')
 
     return render_template('auth/login.html')
-
 
 # Sign up route
 # This route handles user registration. It checks if the username or email already exists in the database.

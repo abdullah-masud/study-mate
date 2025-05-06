@@ -5,8 +5,6 @@ from datetime import datetime, timedelta
 from sqlalchemy import Float
 import uuid
 
-
-
 # Creating SQLAlchemy objects for database operations
 db = SQLAlchemy()
 
@@ -24,7 +22,6 @@ class StudySession(db.Model):
     def total_hours_for_student(cls, student_id):
         #Calculate total study hours for a specific student.
         return db.session.query(db.func.sum(StudySession.hours)).filter_by(student_id=student_id).scalar() or 0
-
 
     def __repr__(self):
         # String representation for debugging
@@ -71,7 +68,6 @@ class ShareRecord(db.Model):
     share_pie = db.Column(db.Boolean, default=False)
 
     shared_at = db.Column(db.DateTime, default=datetime.utcnow)
-
 
     def __repr__(self):
         return f'<ShareRecord from {self.sender_id} to {self.recipient_id}>'
