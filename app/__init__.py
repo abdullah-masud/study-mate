@@ -4,6 +4,7 @@ from app.dashboard import dashboard_bp
 from app.dashboard_api import dashboard_api
 from app.routes import home_bp  # Add this to import the home routes
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 
 def create_app():
     app = Flask(__name__)
@@ -11,7 +12,11 @@ def create_app():
     app.config['SECRET_KEY'] = 'your_secret_key'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///studymate_database.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+    app.config['WTF_CSRF_ENABLED'] = True # Enable CSRF protection
+    app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # Token expires after 1 hour
+    
+    csrf = CSRFProtect()
+    csrf.init_app(app)
     db.init_app(app)
     migrate = Migrate(app, db)
 
