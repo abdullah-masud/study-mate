@@ -1,27 +1,36 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
+
 from app.models import db
 from app.dashboard import dashboard_bp
-from flask_sqlalchemy import SQLAlchemy
 from app.dashboard_api import dashboard_api
-from app.routes import home_bp  # Add this to import the home routes
-from flask_migrate import Migrate
+from app.routes import home_bp
 
 
 def create_app():
+    # ✅ Load environment variables in .env file
+    load_dotenv()
+
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'your_secret_key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///studymate_database.db'
+    # ✅ Configure Flask using environment variables
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
     migrate = Migrate(app, db)
 
-
-    # from .routes import home_bp, dashboard_bp, dashboard_api
-    # Register the blueprints
-    app.register_blueprint(home_bp)  # Home routes without prefix
-    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')  # Dashboard routes with '/dashboard' prefix
+    # ✅ Registration Blueprint
+    app.register_blueprint(home_bp)
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(dashboard_api)
+    
+    print("🔒 SECRET_KEY loaded from .env:", os.getenv('SECRET_KEY'))
+
 
     return app
+
