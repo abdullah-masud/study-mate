@@ -2,7 +2,7 @@ from flask import Flask
 from app.models import db
 from app.dashboard import dashboard_bp
 from app.dashboard_api import dashboard_api
-from app.routes import home_bp  # Add this to import the home routes
+from app.routes import home_bp   
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 
