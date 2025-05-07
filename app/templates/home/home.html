@@ -19,9 +19,7 @@
 
     <!-- Custom Styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/about-modal.css') }}">
 </head>
-
 
 <body>
     <div id="loader-wrapper">
@@ -53,6 +51,7 @@
                         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                             <div class="d-flex align-items-center gap-3 fade-slide">
                                 <a href="{{ url_for('home.home') }}" class="btn btn-outline-light mr-3">Home</a>
+                                
                                 <a href="{{ url_for('home.login') }}" class="btn btn-primary bounce">Get Started</a>
                             </div>
                         </div>
@@ -103,7 +102,8 @@
 
                         <a href="{{ url_for('home.home') }}" class="btn btn-primary">Get Started</a>
 
-                        <a href="#" class="btn btn-secondary">Learn More</a>
+                        <a href="#" id="aboutBtn" class="btn btn-secondary">Learn More</a>
+
                     </div>
                 </div>
                 <!-- Image Section (Dashboard Preview with Modal Trigger) -->
@@ -167,8 +167,8 @@
                         <div class="feature-icon">
                             <i class="fas fa-trophy"></i>
                         </div>
-                        <h3>Achievement System</h3>
-                        <p>Earn rewards and stay motivated with our gamified learning experience.</p>
+                        <h3>Sharing with Friends</h3>
+                        <p>Share your study progress and charts with friends for motivation.</p>
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@
             <div class="row align-items-center">
                 <!-- Left: Image -->
                 <div class="col-md-6 mb-4 mb-md-0 animate-fade slide-left image-column">
-                    <img src="{{ url_for('static', filename='images/sharedata.png') }}" alt="Shared With Me Screenshot"
+                    <img src="{{ url_for('static', filename='images/06.png') }}" alt="Shared With Me Screenshot"
                         class="img-fluid shadow-lg rounded-lg">
                 </div>
 
@@ -249,7 +249,7 @@
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center mb-3">
                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudyMate" class="footer-icon mr-2" style="height: 30px;">
-                        <a href="{{ url_for('home.home') }}" class="text-decoration-none">
+                        <a href="https://github.com/abdullah-masud/study-mate" class="text-decoration-none">
                             <span class="footer-brand">StudyMate</span>
                         </a>
                     </div>
@@ -281,10 +281,10 @@
                             </a>
                         </li>
                         <li>
-                            <a href="/docs" class="d-flex align-items-center">
+                            <a href="#" id="aboutBtn" class="d-flex align-items-center">
                                 <i class="fas fa-book mr-2" style="font-size: 13px;"></i>
-                                <span>Documentation</span>
-                            </a>
+                                <span>About us</span>
+                            </a>                            
                         </li>
                     </ul>
                 </div>
@@ -324,8 +324,10 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
     <script src="{{ url_for('static', filename='js/about-modal.js') }}"></script>
+
     <script>
         window.addEventListener('load', function () {
             document.body.classList.add('loaded');
@@ -334,8 +336,6 @@
 
     <button id="backToTop" title="Go to top">↑</button>
     <div id="toast" class="toast">Loading your workspace...</div>
-
-    
 
 </body>
 

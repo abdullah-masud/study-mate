@@ -1087,20 +1087,25 @@ body {
   top: 50%;
   width: auto;
   padding: 16px;
-  color: white;
+  color: var(--primary); 
   font-weight: bold;
   font-size: 30px;
   user-select: none;
   transform: translateY(-50%);
+  transition: color 0.3s ease;
 }
 
-.prev {
-  left: 0;
+body.dark-mode .prev,
+body.dark-mode .next {
+  color: var(--secondary); 
 }
 
-.next {
-  right: 0;
+.prev:hover, .next:hover {
+  color: var(--accent);
 }
+
+.prev { left: 0; }
+.next { right: 0; }
 
 /* Dashboard Preview Area */
 .dashboard-preview {
