@@ -8,6 +8,7 @@ home_bp = Blueprint('home', __name__)
 
 @home_bp.route('/')
 def home():
+    session.clear()
     return render_template('home/home.html')
 
 @home_bp.route('/dashboard')
@@ -28,8 +29,10 @@ def login():
 
         user = Student.query.filter_by(email=email).first()
         if user and user.check_password(password):
+            session.permanent = False
             session['id'] = user.id
             session['username'] = user.username
+            
             flash('Login successful!', 'success')
             return redirect(url_for('home.dashboard'))
         else:

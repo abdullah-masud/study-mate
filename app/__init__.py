@@ -27,6 +27,7 @@ def create_app(test_config=None):
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         WTF_CSRF_ENABLED=True,
         WTF_CSRF_TIME_LIMIT=3600,
+        SESSION_PERMANENT=False,
     )
 
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
@@ -34,12 +35,12 @@ def create_app(test_config=None):
     if test_config:
         app.config.from_mapping(test_config)
 
-    # ✅ 初始化插件
-    csrf.init_app(app)        # ✅ 用现有实例初始化
+    
+    csrf.init_app(app)        
     db.init_app(app)
     Migrate(app, db)
 
-    # ✅ 注册蓝图
+    
     app.register_blueprint(home_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(dashboard_api)
