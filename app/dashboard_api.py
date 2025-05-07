@@ -4,7 +4,6 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from app.extensions import csrf 
 
-
 dashboard_api = Blueprint('dashboard_api', __name__)
 
 # Route 1: Adding a Learning Record
@@ -64,7 +63,7 @@ def get_summary():
     if not student_id:
         return jsonify({"error": "User not logged in"}), 401
 
-    # 获取时间范围参数
+    # Obtain the time range parameter
     start_str = request.args.get('start')
     end_str = request.args.get('end')
 
@@ -118,7 +117,7 @@ def get_records():
     ]
     return jsonify(records)
 
-# Route 4: Deletion of Learning Record (renamed ✅)
+# Route 4: Deletion of Learning Record (renamed)
 @csrf.exempt
 @dashboard_api.route('/api/delete-session/<int:session_id>', methods=['DELETE'])
 def delete_study_session(session_id):
@@ -185,8 +184,6 @@ def update_color_by_subject(subject):
     db.session.commit()
     return jsonify({"message": f"Color updated for subject {subject}!"}), 200
 
-
-
 # ========== Share function ==========
 @csrf.exempt
 @dashboard_api.route('/api/share-record', methods=['POST'])
@@ -202,12 +199,12 @@ def share_record():
     if not recipient:
         return jsonify({"error": "Recipient not found"}), 404
 
-    # ✅ Check if it has been shared to this email address
+    # Check if it has been shared to this email address
     existing = ShareRecord.query.filter_by(sender_id=sender_id, recipient_id=recipient.id).first()
     if existing:
         return jsonify({"error": "You’ve already shared with this user. Please update or delete the existing record."}), 400
 
-    # ✅ Otherwise add a new record
+    # Otherwise add a new record
     record = ShareRecord(
         sender_id=sender_id,
         recipient_id=recipient.id,
@@ -218,9 +215,6 @@ def share_record():
     db.session.add(record)
     db.session.commit()
     return jsonify({"message": "Record shared successfully!"})
-
-
-
 
 @dashboard_api.route('/api/received-shares', methods=['GET'])
 def get_received_shares():
@@ -239,7 +233,6 @@ def get_received_shares():
             senders[email]["pie"].append(True)
     return jsonify(senders)
 
-
 @dashboard_api.route('/api/shared-chart-data', methods=['GET'])
 def get_shared_chart_data():
     sender_email = request.args.get('sender_email')
@@ -250,7 +243,7 @@ def get_shared_chart_data():
     if not sender:
         return jsonify({"error": "Sender not found"}), 404
 
-    # ✅ Default start = today -6 days; otherwise parsed as passed in
+    # Default start = today -6 days; otherwise parsed as passed in
     try:
         if start_str:
             start_date = datetime.strptime(start_str, "%Y-%m-%d").date()
@@ -267,16 +260,16 @@ def get_shared_chart_data():
         StudySession.date <= end_date
     ).all()
 
-        # ✅ Statistics on total hours, subject hours, colour
+        # Statistics on total hours, subject hours, colour
     total_hours = 0
     subject_hours = defaultdict(int)
     bar_data = defaultdict(lambda: defaultdict(int))
     colors = {}
 
-    # ✅ Extract all occurrences of the subject
+    # Extract all occurrences of the subject
     all_subjects = set(s.subject for s in sessions)
 
-    # ✅ Initialise raw_data to have a structure with all subjects every day
+    # Initialise raw_data to have a structure with all subjects every day
     raw_data = {}
     for i in range(7):
         day_obj = start_date + timedelta(days=i)
@@ -293,7 +286,7 @@ def get_shared_chart_data():
                 "color": colors[subject]
             }
 
-    # ✅ Fill in the actual data
+    # Fill in the actual data
     for s in sessions:
         total_hours += s.hours
         subject_hours[s.subject] += s.hours
@@ -334,7 +327,7 @@ def get_shared_chart_data():
         },
         "barChartData": bar_chart_data,
         "pieChartData": pie_chart_data,
-        "rawData": raw_data  # ✅ The front-end can use it to build charts that are consistent with MyData.
+        "rawData": raw_data  # The front-end can use it to build charts that are consistent with MyData.
     })
 
 

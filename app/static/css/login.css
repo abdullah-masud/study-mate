@@ -1,5 +1,51 @@
 .login-container {
-    max-width: 500px;
-    width: 100%;
+  max-width: 500px;
+  width: 100%;
+}
 
+/* Enhance the button style selector and priority */
+.btn-primary,
+input.btn.btn-primary[type="submit"],
+input[type="submit"].btn.btn-primary,
+button.btn.btn-primary,
+input[type="button"].btn.btn-primary,
+.navbar .btn-primary,
+#auth-form .btn-primary {
+  background-color: #120b7f !important;
+  color: white !important;
+  padding: 14px 28px !important;
+  border: none !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  min-width: 180px !important;
+  text-align: center !important;
+  display: inline-block !important;
+}
+
+/* Hover effect */
+.btn-primary:hover,
+input.btn.btn-primary[type="submit"]:hover,
+input[type="submit"].btn.btn-primary:hover,
+button.btn.btn-primary:hover,
+input[type="button"].btn.btn-primary:hover,
+.navbar .btn-primary:hover,
+#auth-form .btn-primary:hover {
+  background-color: #4a3eff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 20px rgba(18, 11, 127, 0.2) !important;
+}
+
+/* Focus effect */
+.btn-primary:focus,
+input.btn.btn-primary[type="submit"]:focus,
+input[type="submit"].btn.btn-primary:focus,
+button.btn.btn-primary:focus,
+input[type="button"].btn.btn-primary:focus,
+.navbar .btn-primary:focus,
+#auth-form .btn-primary:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(74, 62, 255, 0.25) !important;
 }

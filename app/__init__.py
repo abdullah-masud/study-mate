@@ -35,18 +35,22 @@ def create_app(test_config=None):
     if test_config:
         app.config.from_mapping(test_config)
 
-    
+
     csrf.init_app(app)        
     db.init_app(app)
     Migrate(app, db)
 
-    
+    # Initialize the plugin
+    csrf.init_app(app)
+    db.init_app(app)
+    Migrate(app, db)
+
+    # Registration blueprint
     app.register_blueprint(home_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(dashboard_api)
 
-    print("✅ Flask App Created")
-    print("📁 Database Path:", db_path)
-    print("🔐 SECRET_KEY loaded:", bool(secret_key))
+    print("Database Path:", db_path)
+    print("SECRET_KEY loaded:", bool(secret_key))
 
     return app

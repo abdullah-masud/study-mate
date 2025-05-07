@@ -76,7 +76,6 @@ body.dark-mode #toggleDarkMode i {
   color: #212529;
 }
 
-
 /* Floating background elements with soft blur and animation */
 .background-shape {
   position: fixed;
@@ -132,6 +131,26 @@ body.dark-mode #toggleDarkMode i {
   top: 0;
   z-index: 1000;
   transition: all 0.3s ease-in-out;
+}
+
+.btn-outline-light {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-outline-light:hover {
+  background-color: var(--primary);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(18, 11, 127, 0.2);
 }
 
 .navbar-logo {

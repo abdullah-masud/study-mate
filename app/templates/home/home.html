@@ -47,33 +47,15 @@
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
+                    
                     <!-- Collapse -->
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ml-auto">
-                            <!-- Home Link -->
-                            <li class="nav-item active">
-                                <a class="nav-link" href="{{ url_for('home.home') }}">Home</a>
-                            </li>
-
-                            <!-- About Link -->
-                            <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">About</a>
-                            </li>
-                            
-                            <!-- Contact Link -->
-                            {% if session.get('username') %}
-                            <li class="nav-item">
-                                <form action="{{ url_for('home.logout') }}" method="GET" style="display: inline;">
-                                    {{ form.csrf_token if form }}
-                                    <a class="nav-link" href="#" onclick="this.closest('form').submit(); return false;">Logout</a>
-                                </form>
-                            </li>
-                            {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('home.login') }}">Login</a>
-                            </li>
-                            {% endif %}
-                        </ul>
+                    <!-- Home and Get Started Buttons -->
+                        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                            <div class="d-flex align-items-center gap-3 fade-slide">
+                                <a href="{{ url_for('home.home') }}" class="btn btn-outline-light mr-3">Home</a>
+                                <a href="{{ url_for('home.login') }}" class="btn btn-primary bounce">Get Started</a>
+                            </div>
+                        </div>
 
                         <!-- CTA + Dark Mode Button container -->
                         <div class="d-flex align-items-center ml-3">
@@ -88,6 +70,7 @@
                             </button>
                         </div>
                     </div>
+                </div>
             </nav>
         </header>
     </section>
@@ -118,9 +101,7 @@
                     <!-- Buttons for user actions -->
                     <div class="button-group">
 
-                        <a href="main.html" class="btn btn-primary">Get Started</a>
-
-                        <a href="{{ url_for('home.login') }}" class="btn btn-primary">Get Started</a>
+                        <a href="{{ url_for('home.home') }}" class="btn btn-primary">Get Started</a>
 
                         <a href="#" class="btn btn-secondary">Learn More</a>
                     </div>

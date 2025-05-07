@@ -12,9 +12,11 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
 
-    <!-- Custom Styles -->
+    <!-- Default Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+    <!-- Inject page-specific styles (like login.css) -->
+    {% block head %}{% endblock %}
 </head>
 
 <body>
@@ -30,22 +32,22 @@
                     </a>
 
                     <!-- Toggler -->
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
                     <!-- Navbar Links -->
-                    <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
-                        <ul class="navbar-nav ml-auto">
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('home.home') }}">Home</a>
                             </li>
 
                             {% if session.get('username') %}
                             <li class="nav-item">
-                                <form method="GET" action="{{ url_for('home.logout') }}" style="display:inline;">
-                                    <button type="submit" class="btn btn-link nav-link" style="display:inline; padding:0;">Logout</button>
+                                <form method="GET" action="{{ url_for('home.logout') }}" class="d-inline">
+                                    <button type="submit" class="btn btn-link nav-link border-0 bg-transparent p-2">Logout</button>
                                 </form>
                             </li>
                             {% else %}
@@ -55,16 +57,12 @@
                             {% endif %}
                         </ul>
 
-                        <div class="d-flex align-items-center ml-3">
+                        <div class="d-flex align-items-center ms-3">
                             {% if session.get('username') %}
-                            <a href="{{ url_for('home.dashboard') }}" class="btn btn-primary mr-3">
+                            <a href="{{ url_for('home.dashboard') }}" class="btn btn-primary">
                                 Dashboard
                             </a>
                             {% endif %}
-
-                            <button id="toggleDarkMode" title="Toggle Dark Mode">
-                                <i class="fas fa-moon"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
