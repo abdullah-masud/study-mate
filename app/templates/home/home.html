@@ -19,6 +19,7 @@
 
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about-modal.css') }}">
 </head>
 
 <body>
@@ -54,7 +55,7 @@
                             </li>
                             <!-- About Link -->
                             <li class="nav-item">
-                                <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">About</a>
                             </li>
                             <!-- Contact Link -->
                             {% if session.get('username') %}
@@ -336,6 +337,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/about-modal.js') }}"></script>
     <script>
         window.addEventListener('load', function () {
             document.body.classList.add('loaded');
@@ -344,6 +346,8 @@
 
     <button id="backToTop" title="Go to top">↑</button>
     <div id="toast" class="toast">Loading your workspace...</div>
+
+    
 
 </body>
 
