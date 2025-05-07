@@ -25,7 +25,7 @@ def create_app(test_config=None):
     # Configure Flask application
     app.config.from_mapping(
         SECRET_KEY=secret_key or 'dev_key_please_change',
-        SQLALCHEMY_DATABASE_URI=database_url or 'sqlite:///instance/study_mate.db',
+        SQLALCHEMY_DATABASE_URI=database_url or 'sqlite:///instance/studymate_database.db',
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
     
@@ -47,5 +47,8 @@ def create_app(test_config=None):
     app.register_blueprint(home_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(dashboard_api)
+    
+    print(f"🔒 DATABASE_URL loaded from .env: {database_url}")
+
     
     return app
