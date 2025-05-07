@@ -44,5 +44,15 @@
         </div>
     `;
 
+    // Initialize modal when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
 
+        // Initialize modal functionality
+        document.querySelector('a[href="#"][data-bs-toggle="modal"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            $('#aboutModal').modal('show');
+        });
+    });
 })();
