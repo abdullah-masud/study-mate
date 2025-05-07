@@ -1,60 +1,58 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 import os
-import sys
 
 from app.models import db
 from app.dashboard import dashboard_bp
 from app.dashboard_api import dashboard_api
 from app.routes import home_bp
-from flask_wtf.csrf import CSRFProtect
-
 
 def create_app(test_config=None):
-    # Load .env file
+    # Load environment variables
     load_dotenv()
-    
-    # Create Flask application instance
+
+    # Create Flask app instance
     app = Flask(__name__, instance_relative_config=True)
-    
-    # Get environment variables
-    database_url = os.getenv('DATABASE_URL')
-    secret_key = os.getenv('SECRET_KEY')
-    
-    # Configure Flask application
+
+    # Secure secret key from environment
+    secret_key = os.getenv('SECRET_KEY') or 'dev_key_please_change'
+
+    # Dynamically construct cross-platform database path
+    db_path = os.path.join(app.instance_path, 'studymate_database.db')
+    db_uri = 'sqlite:///' + db_path
+
+    # Configure app
     app.config.from_mapping(
-        SECRET_KEY=secret_key or 'dev_key_please_change',
-        SQLALCHEMY_DATABASE_URI=database_url or 'sqlite:///instance/studymate_database.db',
+        SECRET_KEY=secret_key,
+        SQLALCHEMY_DATABASE_URI=db_uri,
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        WTF_CSRF_ENABLED=True,  # Enable CSRF protection
-        WTF_CSRF_TIME_LIMIT=3600  # Token expires after 1 hour
+        WTF_CSRF_ENABLED=True,
+        WTF_CSRF_TIME_LIMIT=3600,
     )
-    
-    # Ensure instance folder exists
-    try:
-        os.makedirs(app.instance_path, exist_ok=True)
-    except OSError:
-        pass
-    
-    # Test configuration (if provided)
-    if test_config is not None:
+
+    # Ensure instance/ folder exists
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+
+    # Apply test config if needed
+    if test_config:
         app.config.from_mapping(test_config)
-    
-    # Initialize CSRF protection
-    csrf = CSRFProtect()
-    csrf.init_app(app)
-    
-    # Initialize database
+
+    # Init extensions
+    csrf = CSRFProtect(app)
     db.init_app(app)
-    migrate = Migrate(app, db)
-    
+    Migrate(app, db)
+
     # Register blueprints
     app.register_blueprint(home_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(dashboard_api)
-    
-    print(f"🔒 DATABASE_URL loaded from .env: {database_url}")
-    
+
+    # Debug info
+    print("✅ Flask App Created")
+    print("📁 Database Path:", db_path)
+    print("🔐 SECRET_KEY loaded:", bool(secret_key))
+
     return app
