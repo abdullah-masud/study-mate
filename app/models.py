@@ -1,6 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
+from datetime import datetime, timedelta 
+from sqlalchemy import Float
+import uuid
 
 # Creating SQLAlchemy objects for database operations
 db = SQLAlchemy()
@@ -10,7 +13,7 @@ class StudySession(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key, self incrementing ID
     date = db.Column(db.String(20), nullable=False)  # Learning Dates, String Format
     subject = db.Column(db.String(100), nullable=False)  # Study Subjects
-    hours = db.Column(db.Integer, nullable=False)  # Study hours
+    hours = db.Column(Float, nullable=False)  # Study hours
     color = db.Column(db.String(20), default="#888888")  # 🟡 Added: Record colour values (e.g. #36a2eb)
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)  # 👈 Link to Student
@@ -19,7 +22,6 @@ class StudySession(db.Model):
     def total_hours_for_student(cls, student_id):
         #Calculate total study hours for a specific student.
         return db.session.query(db.func.sum(StudySession.hours)).filter_by(student_id=student_id).scalar() or 0
-
 
     def __repr__(self):
         # String representation for debugging
@@ -30,6 +32,7 @@ class Student(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
+    password_history = db.Column(db.JSON, default=[])
 
     sessions = db.relationship('StudySession', backref='student', lazy=True)  # 👈 Relationship
 
@@ -48,3 +51,38 @@ class Student(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+
+
+class ShareRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    sender_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+
+    sender = db.relationship('Student', foreign_keys=[sender_id], backref='sent_shares')
+    recipient = db.relationship('Student', foreign_keys=[recipient_id], backref='received_shares')
+
+    share_summary = db.Column(db.Boolean, default=False)
+    share_bar = db.Column(db.Boolean, default=False)
+    share_pie = db.Column(db.Boolean, default=False)
+
+    shared_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ShareRecord from {self.sender_id} to {self.recipient_id}>'
+
+# The password reset token model class, corresponding to the password_reset_token table in the database.
+class PasswordResetToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(100), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    expiry = db.Column(db.DateTime, nullable=False)
+
+    user = db.relationship('Student', backref='reset_tokens')
+
+    def __init__(self, user_id):
+        self.token = str(uuid.uuid4())
+        self.user_id = user_id
+        self.expiry = datetime.utcnow() + timedelta(minutes=30) # Valid for 30 mins
+

@@ -1,40 +1,56 @@
 {% extends "base.html" %}
 
 {% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
 
-<section class="container d-flex justify-content-center mt-5 mb-5 pt-5 ">
+<section class="container d-flex justify-content-center mt-5 mb-5 pt-5">
     <div class="w-100 mx-auto p-4 rounded shadow-sm login-container">
+
         <form id="auth-form" method="POST" action="{{ url_for('home.signup') }}">
+            <!-- Username input -->
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" id="username">
+                <input type="text" name="username" class="form-control" id="username" required>
             </div>
+
+            <!-- Email input -->
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" name="email" class="form-control" id="exampleInputEmail1"
-                    aria-describedby="emailHelp">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" required>
                 <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
             </div>
+
+            <!-- Password input with strength checker -->
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+                <input type="password" name="password" class="form-control" id="exampleInputPassword1" required>
+
+                <!-- Password requirements checklist -->
+                <div class="password-requirements mt-2 p-2 bg-light rounded small">
+                    <div class="requirement" data-requirement="length"><span class="requirement-icon">✓</span> At least 8 characters</div>
+                    <div class="requirement" data-requirement="uppercase"><span class="requirement-icon">✓</span> One uppercase letter</div>
+                    <div class="requirement" data-requirement="lowercase"><span class="requirement-icon">✓</span> One lowercase letter</div>
+                    <div class="requirement" data-requirement="number"><span class="requirement-icon">✓</span> One number</div>
+                    <div class="requirement" data-requirement="special"><span class="requirement-icon">✓</span> One special character</div>
+                </div>
+
+                <!-- Strength bar and feedback -->
+                <div class="password-strength mt-2">
+                    <div class="strength-bar"></div>
+                </div>
+                <div class="strength-text small text-muted mt-1"></div>
             </div>
-            <div class=" d-flex justify-content-center">
-                <button type="submit" value="signup" class="btn btn-primary "
-                    onclick="setActionForm(signup)">Signup</button>
+
+            <!-- Submit button -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary">Signup</button>
             </div>
             <p class="fs-6 text-center my-2">Already Have an Account? <a href="/login">Login</a></p>
         </form>
+
     </div>
 </section>
 
-
-<Script>
-    function setActionForm(action) {
-        let form = document.getElementById("auth-form");
-        form.action = "{{ url_for('home.signup') }}";
-        form.method = "POST";
-        form.submit()
-    }
-</Script>
+<!-- Link to password strength JS -->
+<script src="{{ url_for('static', filename='js/signup.js') }}"></script>
 {% endblock %}

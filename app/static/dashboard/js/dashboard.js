@@ -2,9 +2,10 @@ let currentWeekStart = getStartOfWeek(new Date());
 
 // Unified initialisation after page load
 window.addEventListener("DOMContentLoaded", () => {
-  fetchSummary();
+  updateAllViews(0);
   fetchRecords();
-  renderProductivityChart();
+  loadSentShares();
+  
 
   flatpickr("#date", {
     dateFormat: "Y-m-d",
@@ -16,7 +17,7 @@ window.addEventListener("DOMContentLoaded", () => {
 document.getElementById("submit-btn").addEventListener("click", async () => {
   const date = document.getElementById("date").value;
   const subject = document.getElementById("subject").value;
-  const hours = parseInt(document.getElementById("hours").value, 10);
+  const hours = parseFloat(document.getElementById("hours").value);
   const color = document.getElementById("color").value;
   const userId = localStorage.getItem('user_id');
   
@@ -27,12 +28,12 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
   };
 
   if (!isValidDate(date)) {
-    alert("请输入有效的日期（格式：YYYY-MM-DD）！");
+    alert("Please enter a valid date (format: YYYY-MM-DD)!");
     return;
   }
 
   if (!date || !subject || isNaN(hours)) {
-    alert("请填写所有字段！");
+    alert("Please complete all fields!");
     return;
   }
 
@@ -49,11 +50,11 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
     try {
       result = await response.json();
     } catch (e) {
-      console.warn("⚠️ JSON 解析失败：", e);
+      console.warn("⚠️ JSON parsing failed:", e);
     }
 
     if (response.ok) {
-      alert(result.message || "添加成功！");
+      alert(result.message || "Add successfully！");
       
       // ✅ Manually clear form fields
       document.getElementById("date").value = "";
@@ -73,9 +74,14 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
   }
 });
 
-async function fetchSummary() {
+async function fetchSummary(startDate = currentWeekStart) {
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6);
+  const startStr = formatDate(startDate);
+  const endStr = formatDate(endDate);
+
   try {
-    const response = await fetch("/api/get-summary");
+    const response = await fetch(`/api/get-summary?start=${startStr}&end=${endStr}`);
     const summary = await response.json();
     document.getElementById("total-hours").textContent = summary.totalHours || 0;
     document.getElementById("most-subject").textContent = summary.mostStudied || "-";
@@ -84,6 +90,17 @@ async function fetchSummary() {
     console.error("❌ Failed to get statistics：", error);
   }
 }
+
+
+function updateSummaryWeekLabel(startDate) {
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6);
+  document.getElementById("summary-week-label").textContent =
+    `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
+}
+
+
+
 
 async function fetchRecords() {
   try {
@@ -265,27 +282,30 @@ async function handleColorChange(subject, newColor) {
   }
 }
 
-// Handle date picker changes
-document.getElementById("prev-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+function updateAllViews(offset) {
+  const newStart = new Date(currentWeekStart);
+  newStart.setDate(newStart.getDate() + 7 * offset);
+  currentWeekStart = newStart;
+
+  // Update All Views
+  fetchSummary(currentWeekStart);
   renderProductivityChart(currentWeekStart);
-});
+  updateSummaryWeekLabel(currentWeekStart);
+  updateWeekLabel(currentWeekStart);
+  updatePieWeekLabel(currentWeekStart);
+  renderPieChart(currentWeekStart); 
+}
 
-document.getElementById("next-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-  renderProductivityChart(currentWeekStart);
-});
 
-// Handle date changes for pie charts
-document.getElementById("prev-pie-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-  renderPieChart(currentWeekStart);
-});
+document.getElementById("prev-week").addEventListener("click", () => updateAllViews(-1));
+document.getElementById("next-week").addEventListener("click", () => updateAllViews(1));
+document.getElementById("prev-summary-week").addEventListener("click", () => updateAllViews(-1));
+document.getElementById("next-summary-week").addEventListener("click", () => updateAllViews(1));
+document.getElementById("prev-pie-week").addEventListener("click", () => updateAllViews(-1));
+document.getElementById("next-pie-week").addEventListener("click", () => updateAllViews(1));
 
-document.getElementById("next-pie-week").addEventListener("click", () => {
-  currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-  renderPieChart(currentWeekStart);
-});
+
+
 
 
 function getStartOfWeek(date) {
@@ -317,3 +337,311 @@ async function renderPieChart(startDate = currentWeekStart) {
 
 
 
+
+
+
+
+
+
+
+
+
+// ✅ global variable
+let sharedBarChart = null;
+let sharedPieChart = null;
+let currentSharedSender = null;
+let currentSharedStartDate = getStartOfWeek(new Date());
+
+// ✅ Register DOMContentLoaded
+window.addEventListener("DOMContentLoaded", () => {
+  const senderSelect = document.getElementById("sender-select");
+  if (!senderSelect) return;
+
+  // ✅ Load optional senders
+  fetch("/api/received-shares")
+    .then(res => res.json())
+    .then(data => {
+      Object.keys(data).forEach(sender => {
+        const option = document.createElement("option");
+        option.value = sender;
+        option.textContent = sender;
+        senderSelect.appendChild(option);
+      });
+    });
+
+  // ✅ Loading shared data when switching senders
+  senderSelect.addEventListener("change", async (e) => {
+    const selected = e.target.value;
+    if (!selected) return;
+
+    const res1 = await fetch("/api/received-shares");
+    const allData = await res1.json();
+    const permission = allData[selected];
+
+    // ✅ Set the current sender and reset date
+    currentSharedSender = selected;
+    currentSharedStartDate = getStartOfWeek(new Date());
+
+    // ✅ Control area visibility
+    document.getElementById("shared-summary-cards").style.display = permission.summary.length ? "flex" : "none";
+    document.getElementById("shared-bar-chart-section").style.display = permission.bar.length ? "block" : "none";
+    document.getElementById("shared-pie-chart-section").style.display = permission.pie.length ? "block" : "none";
+
+    updateSharedViews(0);
+  });
+
+  // ✅ Weekly Switch Button Binding
+  document.getElementById("prev-shared-week").addEventListener("click", () => updateSharedViews(-1));
+  document.getElementById("next-shared-week").addEventListener("click", () => updateSharedViews(1));
+});
+
+// ✅ Main function: switch weeks and update all views
+async function updateSharedViews(offset) {
+  if (!currentSharedSender) return;
+
+  const newStart = new Date(currentSharedStartDate);
+  newStart.setDate(newStart.getDate() + offset * 7);
+  currentSharedStartDate = newStart;
+
+  const end = new Date(newStart);
+  end.setDate(end.getDate() + 6);
+  document.getElementById("shared-week-label").textContent = `${formatDate(newStart)} ~ ${formatDate(end)}`;
+
+  // ✅ Pulling shared data
+  const res = await fetch(`/api/shared-chart-data?sender_email=${currentSharedSender}&start=${formatDate(newStart)}`);
+  const data = await res.json();
+
+  // ✅ Rendering summary cards
+  const { totalHours, mostStudied, leastStudied } = data.summary;
+  document.getElementById("shared-total-hours").textContent = totalHours || 0;
+  document.getElementById("shared-most-subject").textContent = mostStudied || "-";
+  document.getElementById("shared-least-subject").textContent = leastStudied || "-";
+
+  // ✅ Rendering Bar Charts
+  
+    // ✅ Build date labels for the last 7 days
+const recentDates = [];
+for (let i = 0; i < 7; i++) {
+  const d = new Date(currentSharedStartDate);
+  d.setDate(d.getDate() + i);
+  recentDates.push(formatDate(d));
+}
+
+// ✅ Extract all occurrences of the discipline
+const subjectsSet = new Set();
+recentDates.forEach(date => {
+  const dayData = data.rawData?.[date];
+  if (dayData) {
+    Object.keys(dayData).forEach(subject => subjectsSet.add(subject));
+  }
+});
+const subjects = Array.from(subjectsSet);
+
+// ✅ Build datasets for each discipline
+const datasets = subjects.map(subject => ({
+  label: subject,
+  data: recentDates.map(date => data.rawData?.[date]?.[subject]?.hours || 0),
+  backgroundColor: data.rawData?.[recentDates.find(d => data.rawData[d]?.[subject])]?.[subject]?.color || "#888888"
+}));
+
+// ✅ Destruction of old charts
+if (sharedBarChart) sharedBarChart.destroy();
+
+// ✅ Plotting new charts
+const ctxBar = document.getElementById("shared-productivity-canvas").getContext("2d");
+sharedBarChart = new Chart(ctxBar, {
+  type: "bar",
+  data: {
+    labels: recentDates,
+    datasets: datasets
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: { size: 14 }
+        }
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          autoSkip: false,
+          maxRotation: 45,
+          minRotation: 0,
+          font: { size: 12 }
+        }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Hours Studied",
+          font: { size: 14 }
+        },
+        ticks: {
+          font: { size: 12 }
+        }
+      }
+    }
+  }
+});
+
+  
+
+  // ✅ rendering pie chart
+  if (sharedPieChart) sharedPieChart.destroy();
+  const ctxPie = document.getElementById("shared-pie-canvas").getContext("2d");
+  sharedPieChart = new Chart(ctxPie, {
+    type: "pie",
+    data: data.pieChartData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "bottom" }
+      }
+    }
+  });
+}
+
+// ✅ instrumental function
+function getStartOfWeek(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
+
+function formatDate(date) {
+  return date.toISOString().split("T")[0];
+}
+
+// ✅ Share Modal 
+const shareBtn = document.getElementById("confirm-share");
+if (shareBtn) {
+  shareBtn.addEventListener("click", async () => {
+    const recipientEmail = document.getElementById("receiver-email")?.value.trim();
+    const shareSummary = document.getElementById("share-summary")?.checked;
+    const shareBar = document.getElementById("share-productivity")?.checked;
+    const sharePie = document.getElementById("share-piechart")?.checked;
+
+    if (!recipientEmail) {
+      alert("Please enter a recipient email.");
+      return;
+    }
+
+    const response = await fetch("/api/share-record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        recipient_email: recipientEmail,
+        share_summary: shareSummary,
+        share_bar: shareBar,
+        share_pie: sharePie
+      })
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert("🎉 Shared successfully!");
+      document.getElementById("shareModal")?.querySelector(".close")?.click();
+      loadSentShares(); 
+    } else {
+      alert("❌ Error: " + result.error);
+    }
+  });
+}
+
+
+let lastScrollY = window.scrollY;
+
+window.addEventListener("scroll", () => {
+  const navbar = document.querySelector(".navbar");
+
+  if (window.scrollY > lastScrollY) {
+    
+    navbar.classList.add("hide");
+  } else {
+    
+    navbar.classList.remove("hide");
+  }
+
+  lastScrollY = window.scrollY;
+});
+
+async function loadSentShares() {
+  const res = await fetch("/api/sent-shares");
+  const data = await res.json();
+  const tbody = document.querySelector("#my-shared-table tbody");
+
+  if (!tbody) return;
+
+  if (!data.length) {
+    tbody.innerHTML = "<tr><td colspan='5'>No shares yet.</td></tr>";
+    return;
+  }
+
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${r.recipient_email}</td>
+      <td>${r.summary ? "✅" : "❌"}</td>
+      <td>${r.bar ? "✅" : "❌"}</td>
+      <td>${r.pie ? "✅" : "❌"}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" onclick="deleteShare(${r.id})">🗑️</button>
+        <button class="btn btn-sm btn-info" onclick="openEditShare(${r.id}, ${r.summary}, ${r.bar}, ${r.pie})">✏️</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+
+
+async function deleteShare(id) {
+  if (!confirm("Are you sure to revoke this share?")) return;
+  const res = await fetch(`/api/delete-share/${id}`, { method: "DELETE" });
+  const result = await res.json();
+  alert(result.message);
+  loadSentShares();
+}
+
+function openEditShare(id, summary, bar, pie) {
+  document.getElementById("edit-share-id").value = id;
+  document.getElementById("edit-share-summary").checked = summary;
+  document.getElementById("edit-share-bar").checked = bar;
+  document.getElementById("edit-share-pie").checked = pie;
+  $('#editShareModal').modal('show');
+}
+
+async function submitEditShare() {
+  const id = document.getElementById("edit-share-id").value;
+  const body = {
+    share_summary: document.getElementById("edit-share-summary").checked,
+    share_bar: document.getElementById("edit-share-bar").checked,
+    share_pie: document.getElementById("edit-share-pie").checked
+  };
+
+  const res = await fetch(`/api/update-share/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  const result = await res.json();
+  alert(result.message);
+  $('#editShareModal').modal('hide');
+  loadSentShares();
+}
+
+if (!response.ok && result.error.includes("already shared")) {
+  alert("⚠️ You’ve already shared with this user. Please update or delete the existing record instead.");
+}

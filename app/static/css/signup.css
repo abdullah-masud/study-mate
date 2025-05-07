@@ -1,0 +1,57 @@
+.requirement {
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    margin: 2px 0;
+}
+
+.requirement-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    margin-right: 6px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.requirement.met .requirement-icon {
+    background-color: #00cc00;
+    color: white;
+}
+
+.requirement.unmet .requirement-icon {
+    background-color: #ddd;
+    color: #666;
+}
+
+.password-strength {
+    height: 5px;
+    background: #e1e1e1;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    border-radius: 3px;
+}
+
+.strength-bar.weak {
+    background-color: #ff4d4d;
+    width: 33%;
+}
+
+.strength-bar.medium {
+    background-color: #ffd700;
+    width: 66%;
+}
+
+.strength-bar.strong {
+    background-color: #00cc00;
+    width: 100%;
+}
