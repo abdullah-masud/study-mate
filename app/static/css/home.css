@@ -245,9 +245,9 @@ body.dark-mode #toggleDarkMode i {
 
 #toggleDarkMode {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 10000;
+  bottom: 20px;
+  left: 20px;
+  z-index: 20001; 
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -260,6 +260,7 @@ body.dark-mode #toggleDarkMode i {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: translateZ(0); 
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -366,6 +367,19 @@ body.dark-mode #toggleDarkMode i {
   background-color: var(--light);
   position: relative;
   z-index: 1;
+}
+
+/* Add spacing between image and text in Study Tracker section */
+.image-column {
+  padding-right: 40px;
+}
+
+@media (max-width: 768px) {
+  .image-column {
+    padding-right: 0;
+    margin-bottom: 20px;
+    margin-right: 50px;
+  }
 }
 
 .study-tracker img {
@@ -567,6 +581,19 @@ body.dark-mode #toggleDarkMode i {
 }
 
 /* Section 4: Research Banner Section */
+.custom-image-left {
+  width: 500px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.custom-image-left:hover {
+  transform: scale(1.03);
+}
+
 .research-banner {
   background-color: #0f1c3f;
   background-image: url("https://www.transparenttextures.com/patterns/cartographer.png");
@@ -1082,4 +1109,17 @@ body {
   font-size: 1.2rem;
   color: var(--primary);
   cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  #toggleDarkMode {
+    bottom: 15px;
+    left: 15px;
+    width: 35px;
+    height: 35px;
+  }
+
+  #toggleDarkMode i {
+    font-size: 0.9rem;
+  }
 }

@@ -15,14 +15,14 @@ __pycache__/
 
 # Ignore database files (if using SQLite)
 *.sqlite3
+instance/*.db
+instance/studymate_database.db
 
 # Ignore environment variable configuration
 .env
 
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints/
-__pycache__/
 
-# Ignore dataset files
-.env
-  
+# Ignore macOS system files
+.DS_Store
