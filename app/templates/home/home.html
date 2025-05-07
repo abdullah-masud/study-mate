@@ -18,9 +18,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
 
     <!-- Custom Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-    
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about-modal.css') }}">
 </head>
+
 
 <body>
     <div id="loader-wrapper">
@@ -55,30 +56,53 @@
                             </li>
                             <!-- About Link -->
                             <li class="nav-item">
-                                <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">About</a>
                             </li>
                             <!-- Contact Link -->
+                            {% if session.get('username') %}
+                            <li class="nav-item">
+                                <form action="{{ url_for('home.logout') }}" method="GET" style="display: inline;">
+                                    {{ form.csrf_token if form }}
+                                    <a class="nav-link" href="#" onclick="this.closest('form').submit(); return false;">Logout</a>
+                                </form>
+                            </li>
+                            {% else %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('home.login') }}">Login</a>
                             </li>
+                            {% endif %}
                         </ul>
 
                         <!-- CTA + Dark Mode Button container -->
                         <div class="d-flex align-items-center ml-3">
+                            {% if session.get('username') %}
                             <a href="{{ url_for('dashboard_home.dashboard_home') }}" class="btn btn-primary mr-3">
                                 Dashboard
                             </a>
-
+                            {% endif %}
 
                             <button id="toggleDarkMode" title="Toggle Dark Mode">
                                 <i class="fas fa-moon"></i>
                             </button>
-                            
                         </div>
                     </div>
             </nav>
         </header>
     </section>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     <!-- Main Content Section -->
     <main class="main-content">
@@ -91,9 +115,8 @@
                         allowing you to concentrate on mastering the material instead of organizing data.</p>
                     <!-- Buttons for user actions -->
                     <div class="button-group">
-                        <a href="main.html" class="btn btn-primary">Get Started</a> <!-- Redirects to main page -->
+                        <a href="main.html" class="btn btn-primary">Get Started</a>
                         <a href="#" class="btn btn-secondary">Learn More</a>
-                        <!-- Placeholder for additional information -->
                     </div>
                 </div>
                 <!-- Image Section (Dashboard Preview with Modal Trigger) -->
@@ -128,12 +151,12 @@
             </div>
         </div>
     </main>
+
     <!-- Section 2: Key Features -->
     <section class="features" id="features">
         <div class="container">
             <h2 class="text-center mb-5">Powerful Features</h2>
             <div class="row">
-
                 <div class="col-md-4 mb-4">
                     <div class="feature-card fade-in-up">
                         <div class="feature-icon">
@@ -231,7 +254,6 @@
         </div>
     </section>
 
-    
     <!-- Footer -->
     <footer class="custom-footer">
         <div class="container">
@@ -300,23 +322,23 @@
                     <h6 class="footer-heading">LEGAL</h6>
                     <ul class="footer-links list-unstyled">
                         <li class="mb-2">
-                                <i class="fas fa-shield-alt mr-2" style="font-size: 13px;"></i>
-                                <span>Privacy Policy</span>
-                            </a>
+                            <i class="fas fa-shield-alt mr-2" style="font-size: 13px;"></i>
+                            <span>Privacy Policy</span>
                         </li>
                         <li>
-                                <i class="fas fa-file-contract mr-2" style="font-size: 13px;"></i>
-                                <span>Terms</span>
-                            </a>
+                            <i class="fas fa-file-contract mr-2" style="font-size: 13px;"></i>
+                            <span>Terms</span>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
     </footer>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/about-modal.js') }}"></script>
     <script>
         window.addEventListener('load', function () {
             document.body.classList.add('loaded');
@@ -325,6 +347,8 @@
 
     <button id="backToTop" title="Go to top">↑</button>
     <div id="toast" class="toast">Loading your workspace...</div>
+
+    
 
 </body>
 

@@ -9,6 +9,7 @@ from app.models import db
 from app.dashboard import dashboard_bp
 from app.dashboard_api import dashboard_api
 from app.routes import home_bp
+from flask_wtf.csrf import CSRFProtect
 
 
 def create_app(test_config=None):
@@ -27,6 +28,8 @@ def create_app(test_config=None):
         SECRET_KEY=secret_key or 'dev_key_please_change',
         SQLALCHEMY_DATABASE_URI=database_url or 'sqlite:///instance/studymate_database.db',
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        WTF_CSRF_ENABLED=True,  # Enable CSRF protection
+        WTF_CSRF_TIME_LIMIT=3600  # Token expires after 1 hour
     )
     
     # Ensure instance folder exists
@@ -39,6 +42,10 @@ def create_app(test_config=None):
     if test_config is not None:
         app.config.from_mapping(test_config)
     
+    # Initialize CSRF protection
+    csrf = CSRFProtect()
+    csrf.init_app(app)
+    
     # Initialize database
     db.init_app(app)
     migrate = Migrate(app, db)
@@ -49,6 +56,5 @@ def create_app(test_config=None):
     app.register_blueprint(dashboard_api)
     
     print(f"🔒 DATABASE_URL loaded from .env: {database_url}")
-
     
     return app
