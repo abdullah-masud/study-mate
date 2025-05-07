@@ -1,59 +1,69 @@
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import validates
-from datetime import datetime, timedelta 
+from datetime import datetime, timedelta
 from sqlalchemy import Float
 import uuid
+import hashlib
+import os
+import binascii
 
-# Creating SQLAlchemy objects for database operations
+# SQLAlchemy object for database operations
 db = SQLAlchemy()
 
-# The study record model class, corresponding to the study_session table in the database.
+# Study session model definition
 class StudySession(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Primary key, self incrementing ID
-    date = db.Column(db.String(20), nullable=False)  # Learning Dates, String Format
-    subject = db.Column(db.String(100), nullable=False)  # Study Subjects
-    hours = db.Column(Float, nullable=False)  # Study hours
-    color = db.Column(db.String(20), default="#888888")  # 🟡 Added: Record colour values (e.g. #36a2eb)
+    id = db.Column(db.Integer, primary_key=True)  # Auto-increment primary key
+    date = db.Column(db.String(20), nullable=False)  # Date of study session
+    subject = db.Column(db.String(100), nullable=False)  # Subject studied
+    hours = db.Column(Float, nullable=False)  # Hours studied
+    color = db.Column(db.String(20), default="#888888")  # Optional color label
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)  # 👈 Link to Student
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
 
     @classmethod
     def total_hours_for_student(cls, student_id):
-        #Calculate total study hours for a specific student.
+        # Sum all hours for a student
         return db.session.query(db.func.sum(StudySession.hours)).filter_by(student_id=student_id).scalar() or 0
 
     def __repr__(self):
-        # String representation for debugging
         return f'<StudySession {self.date} {self.subject} {self.hours}h>'
 
+# Student user model with salted password hashing
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(200), nullable=False)
+    password_hash = db.Column(db.String(300), nullable=False)  # store salt + hash together
     password_history = db.Column(db.JSON, default=[])
 
-    sessions = db.relationship('StudySession', backref='student', lazy=True)  # 👈 Relationship
+    sessions = db.relationship('StudySession', backref='student', lazy=True)
 
-    @validates('email') # validates email
-    def validate_email(self, key, addresss):
-        assert '@' in addresss, 'Invalid email address'
-        return addresss
-    
+    @validates('email')
+    def validate_email(self, key, address):
+        assert '@' in address, 'Invalid email address'
+        return address
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        """Hashes password using PBKDF2-HMAC with a random salt."""
+        salt = os.urandom(16)
+        hashed = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+        self.password_hash = binascii.hexlify(salt).decode() + ':' + binascii.hexlify(hashed).decode()
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
+        """Verifies password by re-generating hash using stored salt."""
+        try:
+            salt_hex, hash_hex = self.password_hash.split(':')
+            salt = binascii.unhexlify(salt_hex)
+            expected_hash = binascii.unhexlify(hash_hex)
+            new_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+            return new_hash == expected_hash
+        except Exception:
+            return False
 
     def __repr__(self):
         return f'<User {self.username}>'
-    
 
-
+# ShareRecord model
 class ShareRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -72,7 +82,7 @@ class ShareRecord(db.Model):
     def __repr__(self):
         return f'<ShareRecord from {self.sender_id} to {self.recipient_id}>'
 
-# The password reset token model class, corresponding to the password_reset_token table in the database.
+# PasswordResetToken model
 class PasswordResetToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(100), unique=True, nullable=False)
@@ -84,5 +94,4 @@ class PasswordResetToken(db.Model):
     def __init__(self, user_id):
         self.token = str(uuid.uuid4())
         self.user_id = user_id
-        self.expiry = datetime.utcnow() + timedelta(minutes=30) # Valid for 30 mins
-
+        self.expiry = datetime.utcnow() + timedelta(minutes=30)  # Valid for 30 minutes
