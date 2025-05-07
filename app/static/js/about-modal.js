@@ -33,7 +33,7 @@
                         <p>Created by students, for students. We understand the challenges of academic life and are here to help!</p>
                         
                         <h6 class="font-weight-bold">📧 Contact</h6>
-                        <p>Questions or suggestions? Email us at: support@studymate.com</p>
+                        <p>Questions or suggestions? Email us at: help@studymate.com</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
