@@ -7,23 +7,25 @@
     <div class="w-100 mx-auto p-4 rounded shadow-sm login-container">
 
         <form id="auth-form" method="POST" action="{{ url_for('home.signup') }}">
+            {{ form.hidden_tag() }}
+
             <!-- Username input -->
             <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" id="username" required>
+                <label for="{{ form.username.id }}" class="form-label">Username</label>
+                {{ form.username(class="form-control", id="username") }}
             </div>
 
             <!-- Email input -->
             <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" required>
+                <label for="{{ form.email.id }}" class="form-label">Email address</label>
+                {{ form.email(class="form-control", id="email", aria_describedby="emailHelp") }}
                 <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
             </div>
 
             <!-- Password input with strength checker -->
             <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" id="exampleInputPassword1" required>
+                <label for="{{ form.password.id }}" class="form-label">Password</label>
+                {{ form.password(class="form-control", id="exampleInputPassword1") }}
 
                 <!-- Password requirements checklist -->
                 <div class="password-requirements mt-2 p-2 bg-light rounded small">
@@ -43,7 +45,7 @@
 
             <!-- Submit button -->
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary">Signup</button>
+                {{ form.submit(class="btn btn-primary") }}
             </div>
             <p class="fs-6 text-center my-2">Already Have an Account? <a href="/login">Login</a></p>
         </form>
@@ -51,6 +53,5 @@
     </div>
 </section>
 
-<!-- Link to password strength JS -->
 <script src="{{ url_for('static', filename='js/signup.js') }}"></script>
 {% endblock %}

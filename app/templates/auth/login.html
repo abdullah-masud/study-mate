@@ -1,45 +1,37 @@
 {% extends "base.html" %}
 
 {% block body %}
-
-<section class="container d-flex justify-content-center mt-5 mb-5 pt-5 ">
+<section class="container d-flex justify-content-center mt-5 mb-5 pt-5">
     <div class="w-100 mx-auto p-4 rounded shadow-sm login-container">
+
         <form id="auth-form" method="POST" action="{{ url_for('home.login') }}">
+            {{ form.hidden_tag() }}
+
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" name="email" class="form-control" id="exampleInputEmail1"
-                    aria-describedby="emailHelp">
+                <label for="{{ form.email.id }}" class="form-label">Email address</label>
+                {{ form.email(class="form-control", id="exampleInputEmail1", aria_describedby="emailHelp") }}
                 <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
             </div>
+
             <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+                <label for="{{ form.password.id }}" class="form-label">Password</label>
+                {{ form.password(class="form-control", id="exampleInputPassword1") }}
             </div>
-            <div class=" d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary " onclick="setActionForm(login)">Login</button>
+
+            <div class="d-flex justify-content-center">
+                {{ form.submit(class="btn btn-primary") }}
             </div>
+
             <div class="my-2">
                 <p class="text-center text-uppercase mt-3 fw-semibold">
-                    <a style="color: #120b7f;" href="/forgotPassword">Forgot
-                        Password?
-                    </a>
+                    <a style="color: #120b7f;" href="{{ url_for('home.forgot_password') }}">Forgot Password?</a>
                 </p>
                 <p class="fs-6 text-center fw-semibold">New to StudyMate?
-                    <a style="color: #120b7f;" href="/signup">Create New
-                        Account?
-                    </a>
+                    <a style="color: #120b7f;" href="{{ url_for('home.signup') }}">Create New Account?</a>
                 </p>
             </div>
         </form>
+
     </div>
 </section>
-
-<Script>
-    function setActionForm(action) {
-        let form = document.getElementById("auth-form");
-        form.action = "{{ url_for('home.login') }}";
-        form.method = "POST";
-        form.submit()
-    }
-</Script>
 {% endblock %}

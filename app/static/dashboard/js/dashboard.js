@@ -1,3 +1,6 @@
+// ✅ 获取 CSRF Token
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
 let currentWeekStart = getStartOfWeek(new Date());
 
 // Unified initialisation after page load
@@ -42,7 +45,7 @@ document.getElementById("submit-btn").addEventListener("click", async () => {
   try {
     const response = await fetch("/api/add-session", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken},
       body: JSON.stringify(sessionData)
     });
 
@@ -136,7 +139,12 @@ async function deleteRecord(id) {
   if (!confirm("Sure you want to delete this record?")) return;
 
   try {
-    const response = await fetch(`/api/delete-session/${id}`, { method: "DELETE" });
+    const response = await fetch(`/api/delete-session/${id}`, {
+      method: "DELETE",
+      headers: {
+        "X-CSRFToken": csrfToken  // ✅ 添加 CSRF 令牌
+      }
+    });
     const result = await response.json();
 
     if (response.ok) {
@@ -151,11 +159,12 @@ async function deleteRecord(id) {
   }
 }
 
+
 async function updateColor(id, newColor) {
   try {
     const response = await fetch(`/api/update-color/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" ,"X-CSRFToken": csrfToken},
       body: JSON.stringify({ color: newColor })
     });
     if (response.ok) {
@@ -272,7 +281,7 @@ async function handleColorChange(subject, newColor) {
     document.querySelectorAll(`input[data-subject="${subject}"]`).forEach(input => input.value = newColor);
     const response = await fetch(`/api/update-color-subject/${subject}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
       body: JSON.stringify({ color: newColor })
     });
     if (response.ok) renderProductivityChart();
@@ -541,7 +550,7 @@ if (shareBtn) {
 
     const response = await fetch("/api/share-record", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" ,"X-CSRFToken": csrfToken},
       body: JSON.stringify({
         recipient_email: recipientEmail,
         share_summary: shareSummary,
@@ -608,7 +617,12 @@ async function loadSentShares() {
 
 async function deleteShare(id) {
   if (!confirm("Are you sure to revoke this share?")) return;
-  const res = await fetch(`/api/delete-share/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/delete-share/${id}`, {
+    method: "DELETE",
+    headers: {
+      "X-CSRFToken": csrfToken  // ✅ 需要加
+    }
+  });
   const result = await res.json();
   alert(result.message);
   loadSentShares();
@@ -632,7 +646,7 @@ async function submitEditShare() {
 
   const res = await fetch(`/api/update-share/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
     body: JSON.stringify(body)
   });
 

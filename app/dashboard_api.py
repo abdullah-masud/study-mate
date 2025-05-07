@@ -2,10 +2,13 @@ from flask import Blueprint, request, jsonify, session
 from app.models import db, StudySession, Student, ShareRecord
 from collections import defaultdict
 from datetime import datetime, timedelta
+from app.extensions import csrf 
+
 
 dashboard_api = Blueprint('dashboard_api', __name__)
 
 # Route 1: Adding a Learning Record
+@csrf.exempt
 @dashboard_api.route('/api/add-session', methods=['POST'])
 def add_session():
     data = request.get_json()
@@ -116,6 +119,7 @@ def get_records():
     return jsonify(records)
 
 # Route 4: Deletion of Learning Record (renamed ✅)
+@csrf.exempt
 @dashboard_api.route('/api/delete-session/<int:session_id>', methods=['DELETE'])
 def delete_study_session(session_id):
     student_id = session.get('id')
@@ -162,6 +166,7 @@ def productivity_by_day():
     return jsonify(sorted_data)
 
 # Route 6: Updating the colours of a subject
+@csrf.exempt
 @dashboard_api.route('/api/update-color-subject/<subject>', methods=['PUT'])
 def update_color_by_subject(subject):
     student_id = session.get('id')
@@ -183,6 +188,7 @@ def update_color_by_subject(subject):
 
 
 # ========== Share function ==========
+@csrf.exempt
 @dashboard_api.route('/api/share-record', methods=['POST'])
 def share_record():
     data = request.get_json()
@@ -348,7 +354,7 @@ def get_sent_shares():
         })
     return jsonify(result)
 
-
+@csrf.exempt
 @dashboard_api.route('/api/delete-share/<int:share_id>', methods=['DELETE'])
 def delete_share(share_id):
     record = ShareRecord.query.get_or_404(share_id)
@@ -358,6 +364,7 @@ def delete_share(share_id):
     db.session.commit()
     return jsonify({"message": "Share record deleted"})
 
+@csrf.exempt
 @dashboard_api.route('/api/update-share/<int:share_id>', methods=['PUT'])
 def update_share(share_id):
     data = request.get_json()

@@ -4,99 +4,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>StudyMate - Login</title>
-
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- FontAwesome CDN（JSDelivr） -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-
 </head>
 
 <body>
     <section class="hero">
-        <!-- Header - Menu -->
-        <header class="header ">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <!-- Header -->
+        <header class="header">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container mx-5">
                     <!-- Brand -->
                     <a class="navbar-brand" href="{{ url_for('home.home') }}">
                         <img src="{{ url_for('static', filename='images/studymate-logo.png') }}" alt="StudyMate"
                             class="navbar-logo animate-logo">
                     </a>
+
                     <!-- Toggler -->
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <!-- Collapse -->
+
+                    <!-- Navbar Links -->
                     <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
                         <ul class="navbar-nav ml-auto">
-                            <!-- Home Link -->
-                            <li class="nav-item active">
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('home.home') }}">Home</a>
                             </li>
-                            
-                            <!-- Contact Link -->
+
+                            {% if session.get('username') %}
+                            <li class="nav-item">
+                                <form method="GET" action="{{ url_for('home.logout') }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-link nav-link" style="display:inline; padding:0;">Logout</button>
+                                </form>
+                            </li>
+                            {% else %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('home.login') }}">Login</a>
                             </li>
+                            {% endif %}
                         </ul>
 
-                        <!-- CTA + Dark Mode Button container -->
                         <div class="d-flex align-items-center ml-3">
+                            {% if session.get('username') %}
                             <a href="{{ url_for('home.dashboard') }}" class="btn btn-primary mr-3">
                                 Dashboard
                             </a>
-
+                            {% endif %}
 
                             <button id="toggleDarkMode" title="Toggle Dark Mode">
                                 <i class="fas fa-moon"></i>
                             </button>
                         </div>
                     </div>
+                </div>
             </nav>
         </header>
     </section>
 
-    <!-- Flash messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-  <div class="container mt-3">
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }} alert-dismissible fade show flash-alert" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    {% endfor %}
-  </div>
-{% endif %}
-{% endwith %}
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container mt-3">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show flash-alert" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
 
     {% block body %}
     {% endblock %}
 
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        setTimeout(function() {
-          const flashMessages = document.querySelectorAll('.flash-alert');
-          flashMessages.forEach(msg => {
-            msg.style.transition = "opacity 0.5s ease-out";
-            msg.style.opacity = 0;
-            setTimeout(() => msg.remove(), 500); // Remove it from the DOM after fade-out
-          });
-        }, 2000); // 2000 ms = 2 seconds
-      </script>
-      
-
+        setTimeout(function () {
+            const flashMessages = document.querySelectorAll('.flash-alert');
+            flashMessages.forEach(msg => {
+                msg.style.transition = "opacity 0.5s ease-out";
+                msg.style.opacity = 0;
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 2000);
+    </script>
 </body>
 
 </html>
