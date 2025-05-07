@@ -18,7 +18,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
 
     <!-- Custom Styles -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 
 <body>
@@ -45,7 +46,7 @@
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    
+
                     <!-- Collapse -->
                     <!-- Home and Get Started Buttons -->
                         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
@@ -56,19 +57,19 @@
                             </div>
                         </div>
 
-                        <!-- CTA + Dark Mode Button container -->
-                        <div class="d-flex align-items-center ml-3">
-                            {% if session.get('username') %}
-                            <a href="{{ url_for('dashboard_home.dashboard_home') }}" class="btn btn-primary mr-3">
-                                Dashboard
-                            </a>
-                            {% endif %}
+                    <!-- CTA + Dark Mode Button container -->
+                    <div class="d-flex align-items-center ml-3">
+                        {% if session.get('username') %}
+                        <a href="{{ url_for('dashboard_home.dashboard_home') }}" class="btn btn-primary mr-3">
+                            Dashboard
+                        </a>
+                        {% endif %}
 
-                            <button id="toggleDarkMode" title="Toggle Dark Mode">
-                                <i class="fas fa-moon"></i>
-                            </button>
-                        </div>
+                        <button id="toggleDarkMode" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
                     </div>
+                </div>
                 </div>
             </nav>
         </header>
@@ -76,16 +77,16 @@
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
-        {% endif %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+    {% endif %}
     {% endwith %}
 
     <!-- Main Content Section -->
@@ -167,7 +168,9 @@
                         <div class="feature-icon">
                             <i class="fas fa-trophy"></i>
                         </div>
+
                         <h3>Sharing with Friends</h3>
+
                         <p>Share your study progress and charts with friends for motivation.</p>
                     </div>
                 </div>
