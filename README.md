@@ -58,7 +58,57 @@ http://127.0.0.1:5000
 ---
 
 ## 🧪 Instructions for Running Tests
-> _(To be added in Week 7–8 once testing modules like `pytest` are implemented.)_
+
+Follow these steps to properly set up and run the tests for StudyMate:
+
+### 1. Database Setup
+
+Since the submitted code does not include a pre-populated database, you need to initialize it:
+
+```bash
+# Activate your virtual environment first
+python seed.py
+```
+
+This script will:
+- Create the necessary database tables
+- Add a test user (Email: test@example.com, Password: Testpassword123！)
+- Add sample study sessions to demonstrate app functionality
+
+### 2. Running Unit Tests
+
+Unit tests verify the core functionality of the application:
+
+```bash
+python -m pytest tests/test_unit.py -v
+```
+
+These tests check the API endpoints, database models, and basic application logic.
+
+### 3. Running Selenium Tests
+
+Selenium tests require the application to be running first:
+
+#### Terminal 1: Start the Flask application
+```bash
+python main.py
+```
+
+#### Terminal 2: Run the Selenium tests
+```bash
+python -m tests.test_selenium
+```
+
+**Note:** Selenium tests require Chrome browser. The tests use webdriver-manager to automatically download the appropriate ChromeDriver version. If you encounter issues, ensure you have Chrome installed and that webdriver-manager is installed via:
+```bash
+pip install webdriver-manager
+```
+
+### 4. Troubleshooting
+
+- **Database errors**: If you encounter database errors, try deleting the `instance/studymate_database.db` file and run `python seed.py` again.
+- **Selenium test failures**: Ensure the Flask application is running on port 5000 before starting the tests.
+- **Browser issues**: If the tests can't launch Chrome, try running in non-headless mode by editing `tests/test_selenium.py` and removing the `--headless` option.
 
 ---
 

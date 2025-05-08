@@ -1,36 +1,47 @@
 import pytest
 from app import create_app, db
-from app.models import StudySession
+from app.models import Student, StudySession
 
-# This fixture creates a temporary Flask test client with an in-memory SQLite database.
 @pytest.fixture
 def client():
     app = create_app({'TESTING': True, 'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'})
     with app.test_client() as client:
         with app.app_context():
             db.create_all()
+            # Create a test student and commit to DB
+            student = Student(username='testuser', email='test@example.com')
+            student.set_password("Test@1234")
+            db.session.add(student)
+            db.session.commit()
+            
+            
+            student_id = student.id
+            
+            # Simulate login by setting session id 
+            with client.session_transaction() as sess:
+                sess['id'] = student_id
+                
         yield client
 
-# ✅ Test 1: Check if the home page ("/") is accessible and returns status code 200.
+# ✅ Test 1: Home page loads successfully
 def test_home_page(client):
     response = client.get('/')
     assert response.status_code == 200
 
-# ✅ Test 2: Verify that a study session can be successfully added via POST request.
+# ✅ Test 2: Add study session
 def test_add_session(client):
     response = client.post('/api/add-session', json={
         'user_id': 1,
         'date': '2025-05-01',
         'subject': 'Math',
-        'hours': 2,
+        'hours': 2.0,
         'color': '#ff0000'
     })
     assert response.status_code == 200
-    assert response.json['status'] == 'success'
+    assert response.json['message'] == 'Session added successfully!'
 
-# ✅ Test 3: Ensure the summary API returns a valid dictionary when queried.
+# ✅ Test 3: Get summary after inserting data
 def test_get_summary(client):
-    # Precondition: Add one record before fetching summary
     client.post('/api/add-session', json={
         'user_id': 1,
         'date': '2025-05-01',
@@ -38,27 +49,25 @@ def test_get_summary(client):
         'hours': 2.0,
         'color': '#ff0000'
     })
-    response = client.get('/api/summary?user_id=1&start_date=2025-05-01')
+    response = client.get('/api/get-summary?start=2025-05-01&end=2025-05-31')
     assert response.status_code == 200
     assert isinstance(response.json, dict)
 
-# ✅ Test 4: Confirm that accessing a nonexistent route returns 404 Not Found.
+# ✅ Test 4: Handle non-existing routes
 def test_invalid_route(client):
     response = client.get('/nonexistent')
     assert response.status_code == 404
 
-# ✅ Test 5: Check if the summary response contains expected keys like "total_hours".
+# ✅ Test 5: Check keys in summary response
 def test_summary_keys(client):
-    # Add a study record as precondition
     client.post('/api/add-session', json={
-        'user_id': 2,
+        'user_id': 1,
         'date': '2025-05-02',
         'subject': 'Physics',
         'hours': 1.5,
         'color': '#00ff00'
     })
-    response = client.get('/api/summary?user_id=2&start_date=2025-05-01')
+    response = client.get('/api/get-summary?start=2025-05-01&end=2025-05-31')
     summary = response.json
-
-    # Adjust the key check based on your actual summary response format
-    assert "total_hours" in summary or "summary" in summary
+    assert summary is not None
+    assert "totalHours" in summary
