@@ -26,3 +26,6 @@ instance/studymate_database.db
 
 # Ignore macOS system files
 .DS_Store
+
+# Ignore Windows system files
+node_modules/
