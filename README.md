@@ -43,13 +43,17 @@ source venv/bin/activate  # On Windows use: venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+### 4. initialising the database
+```bash
+python main.py # or seed.py for initialising the database
+```
 
-### 4. Run the Flask App
+### 5. Run the Flask App
 ```bash
 flask run
 ```
 
-### 5. Access the App
+### 6. Access the App
 Open your browser and navigate to:  
 ```
 http://127.0.0.1:5000
