@@ -49,13 +49,13 @@
 
                     <!-- Collapse -->
                     <!-- Home and Get Started Buttons -->
-                        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                            <div class="d-flex align-items-center gap-3 fade-slide">
-                                <a href="{{ url_for('home.home') }}" class="btn btn-outline-light mr-3">Home</a>
-                                
-                                <a href="{{ url_for('home.login') }}" class="btn btn-primary bounce">Get Started</a>
-                            </div>
+                    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                        <div class="d-flex align-items-center gap-3 fade-slide">
+                            <a href="{{ url_for('home.home') }}" class="btn btn-outline-light mr-3">Home</a>
+
+                            <a href="{{ url_for('home.login') }}" class="btn btn-primary bounce">Get Started</a>
                         </div>
+                    </div>
 
                     <!-- CTA + Dark Mode Button container -->
                     <div class="d-flex align-items-center ml-3">
@@ -251,7 +251,8 @@
                 <!-- Brand Column -->
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudyMate" class="footer-icon mr-2" style="height: 30px;">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="StudyMate"
+                            class="footer-icon mr-2" style="height: 30px;">
                         <a href="https://github.com/abdullah-masud/study-mate" class="text-decoration-none">
                             <span class="footer-brand">StudyMate</span>
                         </a>
@@ -265,7 +266,7 @@
                     <h6 class="footer-heading">PRODUCT</h6>
                     <ul class="footer-links list-unstyled">
                         <li class="mb-2">
-                            <a href="{{ url_for('dashboard_home.dashboard_home') }}" class="d-flex align-items-center">
+                            <a href="{{ url_for('home.login') }}" class="d-flex align-items-center">
                                 <i class="fas fa-tachometer-alt mr-2" style="font-size: 13px;"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -287,7 +288,7 @@
                             <a href="#" id="aboutBtn" class="d-flex align-items-center">
                                 <i class="fas fa-book mr-2" style="font-size: 13px;"></i>
                                 <span>About us</span>
-                            </a>                            
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -327,7 +328,7 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
+
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
     <script src="{{ url_for('static', filename='js/about-modal.js') }}"></script>
 
