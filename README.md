@@ -149,3 +149,15 @@ pip install webdriver-manager
 
 This project is for academic use only as part of **CITS5505 Web Programming** at UWA.  
 For collaboration guidelines and issue tracking, please use the [Issues](https://github.com/abdullah-masud/study-mate/issues) and [Pull Requests](https://github.com/abdullah-masud/study-mate/pulls) tabs.
+
+""## 🔖 References
+[1] "Flask Documentation," Flask, 2024. [Online]. Available: https://flask.palletsprojects.com/. [Accessed: 14-May-2025].
+
+[2] "SQLAlchemy Documentation," SQLAlchemy, 2024. [Online]. Available: https://docs.sqlalchemy.org/. [Accessed: 14-May-2025].
+
+[3] "Bootstrap Documentation," Bootstrap, 2024. [Online]. Available: https://getbootstrap.com/docs/. [Accessed: 14-May-2025].
+
+[4] "Chart.js Documentation," Chart.js, 2024. [Online]. Available: https://www.chartjs.org/docs/latest/. [Accessed: 14-May-2025].
+
+[5] OpenAI, "ChatGPT Assistance for Code Optimization and Debugging," ChatGPT, OpenAI, 2025. [Online]. Available: https://openai.com/chatgpt/. [Accessed: 14-May-2025].
+""
