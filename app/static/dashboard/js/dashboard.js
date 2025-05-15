@@ -360,25 +360,100 @@ let sharedBarChart = null;
 let sharedPieChart = null;
 let currentSharedSender = null;
 let currentSharedStartDate = getStartOfWeek(new Date());
+let allSenders = []; // Store all available senders
 
 // ✅ Register DOMContentLoaded
 window.addEventListener("DOMContentLoaded", () => {
   const senderSelect = document.getElementById("sender-select");
-  if (!senderSelect) return;
+  const senderSearchInput = document.getElementById("sender-search");
+  const senderSearchResults = document.getElementById("sender-search-results");
+  
+  if (!senderSelect || !senderSearchInput) return;
 
-  // ✅ Load optional senders
+  // Load all senders for dropdown and search functionality
   fetch("/api/received-shares")
     .then(res => res.json())
     .then(data => {
-      Object.keys(data).forEach(sender => {
+      allSenders = Object.keys(data).map(email => {
+        return {
+          email,
+          permissions: data[email]
+        };
+      });
+      
+      // Populate the hidden select element (for compatibility)
+      allSenders.forEach(sender => {
         const option = document.createElement("option");
-        option.value = sender;
-        option.textContent = sender;
+        option.value = sender.email;
+        option.textContent = sender.email;
         senderSelect.appendChild(option);
       });
     });
+  
+  // Function to display search results
+  function displaySearchResults(senders) {
+    if (senders.length === 0) {
+      senderSearchResults.innerHTML = '<div class="alert alert-info">No matching senders found</div>';
+    } else {
+      senderSearchResults.innerHTML = senders.map(sender => `
+        <div class="card mb-2 sender-result" data-email="${sender.email}">
+          <div class="card-body py-2">
+            <div><strong>${sender.email}</strong></div>
+          </div>
+        </div>
+      `).join('');
+      
+      // Add click event to select sender
+      document.querySelectorAll('.sender-result').forEach(card => {
+        card.addEventListener('click', function() {
+          const email = this.dataset.email;
+          selectSender(email);
+        });
+      });
+    }
+    
+    senderSearchResults.style.display = 'block';
+  }
+  
+  // Function to select a sender
+  function selectSender(email) {
+    currentSharedSender = email;
+    senderSelect.value = email;
+    senderSearchInput.value = email;
+    senderSearchResults.style.display = 'none';
+    
+    // Trigger change event to load the data
+    const event = new Event('change');
+    senderSelect.dispatchEvent(event);
+  }
+  
+  // Show all senders when clicking the search input
+  senderSearchInput.addEventListener('focus', function() {
+    displaySearchResults(allSenders);
+  });
+  
+  // Real-time search on input
+  senderSearchInput.addEventListener('input', function() {
+    const searchTerm = this.value.trim();
+    
+    // Filter senders based on input
+    const filteredSenders = searchTerm 
+      ? allSenders.filter(sender => 
+          sender.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      : allSenders;
+    
+    displaySearchResults(filteredSenders);
+  });
+  
+  // Clear search results when clicking outside
+  document.addEventListener('click', (event) => {
+    if (!senderSearchResults.contains(event.target) && 
+        event.target !== senderSearchInput) {
+      senderSearchResults.style.display = "none";
+    }
+  });
 
-  // ✅ Loading shared data when switching senders
+  // Loading shared data when switching senders
   senderSelect.addEventListener("change", async (e) => {
     const selected = e.target.value;
     if (!selected) return;
@@ -387,11 +462,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const allData = await res1.json();
     const permission = allData[selected];
 
-    // ✅ Set the current sender and reset date
+    // Set the current sender and reset date
     currentSharedSender = selected;
     currentSharedStartDate = getStartOfWeek(new Date());
 
-    // ✅ Control area visibility
+    // Control area visibility
     document.getElementById("shared-summary-cards").style.display = permission.summary.length ? "flex" : "none";
     document.getElementById("shared-bar-chart-section").style.display = permission.bar.length ? "block" : "none";
     document.getElementById("shared-pie-chart-section").style.display = permission.pie.length ? "block" : "none";
@@ -399,7 +474,7 @@ window.addEventListener("DOMContentLoaded", () => {
     updateSharedViews(0);
   });
 
-  // ✅ Weekly Switch Button Binding
+  // Weekly Switch Button Binding
   document.getElementById("prev-shared-week").addEventListener("click", () => updateSharedViews(-1));
   document.getElementById("next-shared-week").addEventListener("click", () => updateSharedViews(1));
 });
@@ -657,5 +732,5 @@ async function submitEditShare() {
 }
 
 if (!response.ok && result.error.includes("already shared")) {
-  alert("⚠️ You’ve already shared with this user. Please update or delete the existing record instead.");
+  alert("⚠️ You've already shared with this user. Please update or delete the existing record instead.");
 }
