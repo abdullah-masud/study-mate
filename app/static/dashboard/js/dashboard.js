@@ -656,6 +656,84 @@ async function submitEditShare() {
   loadSentShares();
 }
 
-if (!response.ok && result.error.includes("already shared")) {
-  alert("⚠️ You’ve already shared with this user. Please update or delete the existing record instead.");
+// To-Do List Logic
+const todoForm = document.getElementById("todo-form");
+const todoInput = document.getElementById("todo-input");
+const todoList = document.getElementById("todo-list");
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTodos = JSON.parse(localStorage.getItem("todos") || "[]");
+  savedTodos.forEach(todo => renderTodo(todo.text, todo.completed));
+});
+
+todoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = todoInput.value.trim();
+  if (!text) return;
+  renderTodo(text, false);
+  saveTodos();
+  todoInput.value = "";
+});
+
+function renderTodo(text, completed) {
+  const li = document.createElement("li");
+  li.className = `list-group-item ${completed ? "completed" : ""}`;
+  li.innerHTML = `
+    <span>${text}</span>
+    <div class="todo-actions">
+      <button class="btn btn-sm btn-outline-success">${completed ? "✅" : "✔️"}</button>
+      <button class="btn btn-sm btn-outline-danger">🗑️</button>
+    </div>
+  `;
+  li.querySelector(".btn-outline-success").addEventListener("click", () => {
+    li.classList.toggle("completed");
+    saveTodos();
+  });
+  li.querySelector(".btn-outline-danger").addEventListener("click", () => {
+    li.remove();
+    saveTodos();
+  });
+  todoList.appendChild(li);
 }
+
+function saveTodos() {
+  const todos = [];
+  todoList.querySelectorAll("li").forEach(li => {
+    todos.push({
+      text: li.querySelector("span").textContent,
+      completed: li.classList.contains("completed")
+    });
+  });
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+document.getElementById("export-pdf-btn").addEventListener("click", async () => {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  const summaryText = `
+    🧠 Study Summary (Week of ${document.getElementById("week-label").textContent}):
+    Total Hours: ${document.getElementById("total-hours").textContent}
+    Most Studied: ${document.getElementById("most-subject").textContent}
+    Least Studied: ${document.getElementById("least-subject").textContent}
+  `;
+
+  // Add summary text
+  pdf.setFontSize(12);
+  pdf.text(summaryText, 10, 20);
+
+  // Capture bar chart
+  const barCanvas = document.getElementById("productivity-chart");
+  const barImage = await html2canvas(barCanvas);
+  const barData = barImage.toDataURL("image/png");
+  pdf.addImage(barData, "PNG", 10, 40, 180, 70); // Adjust placement
+
+  // Capture pie chart
+  const pieCanvas = document.getElementById("weekly-pie-chart");
+  const pieImage = await html2canvas(pieCanvas);
+  const pieData = pieImage.toDataURL("image/png");
+  pdf.addImage(pieData, "PNG", 10, 120, 180, 70); // Below bar chart
+
+  // Download file
+  pdf.save("StudyMate_Summary.pdf");
+});
+
