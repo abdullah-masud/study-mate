@@ -71,3 +71,37 @@ def test_summary_keys(client):
     summary = response.json
     assert summary is not None
     assert "totalHours" in summary
+
+# ✅ Test 6: Test user authentication process
+def test_user_authentication():
+    # 创建一个新的测试客户端，不带任何session
+    app = create_app({'TESTING': True, 'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'})
+    
+    with app.app_context():
+        db.create_all()
+        # 创建测试用户
+        student = Student(username='testauth', email='testauth@example.com')
+        student.set_password("Test@1234")
+        db.session.add(student)
+        db.session.commit()
+    
+    with app.test_client() as client:
+        # 测试查看dashboard时会被重定向到登录页面
+        response = client.get('/dashboard')
+        assert response.status_code == 302  # 期望重定向
+        
+        # 测试登录成功后可以访问dashboard
+        with client.session_transaction() as sess:
+            sess['id'] = 1
+            sess['username'] = 'testauth'
+        
+        response = client.get('/dashboard')
+        assert response.status_code == 200  # 成功访问
+        
+        # 测试退出登录
+        response = client.get('/logout', follow_redirects=True)
+        assert response.status_code == 200
+        
+        # 确认已退出登录
+        response = client.get('/dashboard')
+        assert response.status_code == 302  # 应该重定向到登录页面
