@@ -32,23 +32,23 @@ class FlaskServerThread(threading.Thread):
 class StudyMateSeleniumTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # 创建测试版本的Flask应用
+        # Create the test version of the Flask application
         cls.app = create_app({'TESTING': True, 'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'})
         
-        # 启动Flask服务器在单独的线程中
+        # Start the Flask server in a separate thread
         cls.server_thread = FlaskServerThread(cls.app)
         cls.server_thread.start()
-        # 给服务器一些启动时间
+        # Give the server some startup time
         time.sleep(2)
         
-        # 设置Chrome浏览器选项
+        # Set the Chrome browser options
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # 无头模式
+        chrome_options.add_argument("--headless") 
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-gpu")
         
-        # 启动浏览器
+        # Start the browser
         try:
             service = Service(ChromeDriverManager().install())
             cls.driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -63,14 +63,14 @@ class StudyMateSeleniumTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        # 关闭浏览器
+        # Close the browser
         cls.driver.quit()
         
-        # 关闭Flask服务器
+        # Close the Flask browser
         if hasattr(cls, 'server_thread') and cls.server_thread.is_alive():
             try:
                 cls.server_thread.shutdown()
-                cls.server_thread.join(5)  # 等待最多5秒钟
+                cls.server_thread.join(5) 
                 print("✅ Server shutdown completed")
             except Exception as e:
                 print(f"Warning: Could not cleanly shutdown server: {e}")
@@ -170,28 +170,28 @@ class StudyMateSeleniumTest(unittest.TestCase):
     def test_6_form_interaction(self):
         """Test 6: 测试表单交互功能"""
         try:
-            # 打开登录页面而不是忘记密码页面（可能更可靠）
+            # Open the login page instead of the password forgetting page (which might be more reliable).
             self.driver.get(f"{self.base_url}/login")
             time.sleep(1)
             
-            # 确认页面加载成功 - 使用页面内容验证
+            # Confirm successful page loading - Use page content verification
             page_source = self.driver.page_source.lower()
             self.assertIn("login", page_source, "Page should contain 'login' text")
             
-            # 查找电子邮件输入框（尝试多种方法）
+            # Find the email input box (try multiple methods)
             try:
-                # 尝试方法1: 通过ID
+                # Try Method 1: Through ID
                 email_field = self.driver.find_element(By.ID, "email")
             except:
                 try:
-                    # 尝试方法2: 通过name属性
+                    # Try Method 2: Through the name attribute
                     email_field = self.driver.find_element(By.NAME, "email")
                 except:
                     try:
-                        # 尝试方法3: 通过type属性查找email输入框
+                        # Try Method 3: Search for the email input box through the type attribute
                         email_field = self.driver.find_element(By.CSS_SELECTOR, "input[type='email']")
                     except:
-                        # 尝试方法4: 找到第一个输入框
+                        # Try Method 4: Find the first input box
                         all_inputs = self.driver.find_elements(By.TAG_NAME, "input")
                         email_field = None
                         for input_field in all_inputs:
@@ -202,30 +202,30 @@ class StudyMateSeleniumTest(unittest.TestCase):
                         if email_field is None:
                             raise Exception("Could not find any suitable input field for email")
             
-            # 测试表单交互 - 输入电子邮件
+            # Test form interaction - Enter an email
             email_field.clear()
             email_field.send_keys("test@example.com")
             time.sleep(1)
             
-            # 验证输入是否成功
+            # Verify whether the input is successful
             email_value = email_field.get_attribute("value")
             self.assertEqual(email_value, "test@example.com", "Email input field should contain the entered email")
             
-            # 查找第一个密码输入框
+            # Look for the first password input box
             try:
                 password_field = self.driver.find_element(By.CSS_SELECTOR, "input[type='password']")
                 
-                # 测试密码输入
+                # Test password input
                 password_field.clear()
                 password_field.send_keys("TestPassword123")
                 time.sleep(1)
                 
-                # 验证密码输入是否成功
+                # Verify whether the password input is successful
                 self.assertIsNotNone(password_field.get_attribute("value"), "Password should be entered")
             except:
                 print("Warning: Could not test password field, continuing...")
             
-            # 查找提交按钮
+            # Look for the submit button
             try:
                 submit_button = self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
             except:
@@ -235,22 +235,22 @@ class StudyMateSeleniumTest(unittest.TestCase):
                     try:
                         submit_button = self.driver.find_element(By.CSS_SELECTOR, "input[type='submit']")
                     except:
-                        # 最后尝试找任何看起来像提交按钮的元素
+                        # Finally, try to find any elements that look like the submit button
                         all_buttons = self.driver.find_elements(By.TAG_NAME, "button")
                         if len(all_buttons) > 0:
                             submit_button = all_buttons[0]
                         else:
-                            # 查找可能是提交按钮的input元素
+                            # Search for the input element that might be the submit button
                             submit_inputs = self.driver.find_elements(By.CSS_SELECTOR, "input[type='button'], input[type='submit']")
                             if len(submit_inputs) > 0:
                                 submit_button = submit_inputs[0]
                             else:
                                 raise Exception("Could not find any submit button")
             
-            # 检查按钮是否存在
+            # Check whether the button exists
             self.assertIsNotNone(submit_button, "Submit button should exist on the page")
             
-            # 检查按钮是否可点击
+            # Check whether the button is clickable
             self.assertTrue(submit_button.is_enabled(), "Submit button should be enabled")
             
             print("✅ Test 6 Passed: Form interaction test successful")

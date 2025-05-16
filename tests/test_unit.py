@@ -14,7 +14,6 @@ def client():
             db.session.add(student)
             db.session.commit()
             
-            
             student_id = student.id
             
             # Simulate login by setting session id 
@@ -74,34 +73,34 @@ def test_summary_keys(client):
 
 # ✅ Test 6: Test user authentication process
 def test_user_authentication():
-    # 创建一个新的测试客户端，不带任何session
+    # Create a new test client without any sessions
     app = create_app({'TESTING': True, 'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'})
     
     with app.app_context():
         db.create_all()
-        # 创建测试用户
+        # Create test users
         student = Student(username='testauth', email='testauth@example.com')
         student.set_password("Test@1234")
         db.session.add(student)
         db.session.commit()
     
     with app.test_client() as client:
-        # 测试查看dashboard时会被重定向到登录页面
+        # When testing and viewing the dashboard, it will be redirected to the login page
         response = client.get('/dashboard')
-        assert response.status_code == 302  # 期望重定向
+        assert response.status_code == 302  
         
-        # 测试登录成功后可以访问dashboard
+        # After a successful test login, you can access the dashboard
         with client.session_transaction() as sess:
             sess['id'] = 1
             sess['username'] = 'testauth'
         
         response = client.get('/dashboard')
-        assert response.status_code == 200  # 成功访问
+        assert response.status_code == 200  
         
-        # 测试退出登录
+        # Test logout
         response = client.get('/logout', follow_redirects=True)
         assert response.status_code == 200
         
-        # 确认已退出登录
+        # Confirm that you have logged out
         response = client.get('/dashboard')
-        assert response.status_code == 302  # 应该重定向到登录页面
+        assert response.status_code == 302 
