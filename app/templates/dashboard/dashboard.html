@@ -20,6 +20,10 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <!-- jsPDF & html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -68,6 +72,19 @@
     <div class="tab-content mt-4" id="dataTabContent">
       <!-- My Data Tab -->
       <div class="tab-pane fade show active" id="mydata" role="tabpanel">
+
+         <!-- 📌 To-do List Section -->
+        <section class="card mb-5" id="todo-section">
+          <div class="card-body">
+            <h4 class="card-title mb-3">📝 My To-Do List</h4>
+            <form id="todo-form" class="form-inline mb-3">
+              <input type="text" id="todo-input" class="form-control mr-2 mb-2" placeholder="Enter your task..." />
+              <button type="submit" class="btn btn-success mb-2">Add Task</button>
+            </form>
+            <ul id="todo-list" class="list-group"></ul>
+          </div>
+        </section>
+
         <!-- Add New Study Session -->
         <section class="card mb-5" id="add-session-section">
           <div class="card-body">
@@ -162,6 +179,9 @@
           </div>
         </section>
 
+        <div class="text-right mb-4">
+              <button class="btn btn-danger" id="export-pdf-btn">📄 Export Summary as PDF</button>
+        </div>
 
         <!-- Study History Table -->
         <section class="card mb-5" id="study-history-section">
