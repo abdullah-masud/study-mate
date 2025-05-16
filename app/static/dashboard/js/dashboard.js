@@ -14,6 +14,12 @@ window.addEventListener("DOMContentLoaded", () => {
     dateFormat: "Y-m-d",
     maxDate: "today"
   });
+
+  // 初始化更新分享按钮
+  const updateShareBtn = document.getElementById("update-share-btn");
+  if (updateShareBtn) {
+    updateShareBtn.addEventListener("click", updateShare);
+  }
 });
 
 // Form Submission Logic
@@ -645,6 +651,11 @@ if (shareBtn) {
   });
 }
 
+// ✅ Add event listener for update share button
+const updateShareBtn = document.getElementById("update-share-btn");
+if (updateShareBtn) {
+  updateShareBtn.addEventListener("click", updateShare);
+}
 
 let lastScrollY = window.scrollY;
 
@@ -695,7 +706,7 @@ async function deleteShare(id) {
   const res = await fetch(`/api/delete-share/${id}`, {
     method: "DELETE",
     headers: {
-      "X-CSRFToken": csrfToken  // ✅ 需要加
+      "X-CSRFToken": csrfToken  
     }
   });
   const result = await res.json();
@@ -735,6 +746,11 @@ async function updateShare() {
   alert(result.message);
   $('#editShareModal').modal('hide');
   loadSentShares();
+}
+
+// ✅ Add submitEditShare function for calling from HTML
+function submitEditShare() {
+  updateShare();
 }
 
 // ✅ To-Do List Logic
