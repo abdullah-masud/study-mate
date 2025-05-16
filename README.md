@@ -86,19 +86,7 @@ StudyMate uses two different database environments:
 1. **Development/Demo Database**: Initialized through `seed.py`, contains test data(This section is used for lecture presentations)
 2. **Test Database**: Separate in-memory database automatically created for tests, following testing best practices
 
-To set up the development/demo database, run:
-
-```bash
-# Activate your virtual environment first
-python seed.py
-```
-
-This script will:
-- Drop and recreate all database tables
-- Add a test user (Email: test@example.com, Password: Testpassword123！)
-- Add sample study sessions for demonstration
-
-**Note**: Automated tests use their own independent test database and do not rely on this script. This script is mainly for manual testing and demonstrations.
+**Note**: Automated tests use their own independent test database and do not rely on `seed.py`. `seed.py` is mainly for manual testing and demonstrations.
 
 ### 2. Running Unit Tests
 

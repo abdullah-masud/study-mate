@@ -29,3 +29,10 @@ instance/studymate_database.db
 
 # Ignore Windows system files
 node_modules/
+
+# Ignore pytest cache
+.pytest_cache/
+
+# Ignore pycache
+__pycache__/
+
