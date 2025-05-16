@@ -1,8 +1,21 @@
 {% extends "base.html" %}
 
-{% block body %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+{% block title %}StudyMate - Sign Up{% endblock %}
 
+{% block nav_links %}
+<!-- Display only the home button on the registration page-->
+<a href="{{ url_for('home.home') }}" class="btn btn-outline-light mr-3">Home</a>
+{% endblock nav_links %}
+
+{% block nav_buttons %}
+<!-- No button is displayed on the registration page-->
+{% endblock nav_buttons %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+{% endblock %}
+
+{% block body %}
 <section class="container d-flex justify-content-center mt-5 mb-5 pt-5">
     <div class="w-100 mx-auto p-4 rounded shadow-sm login-container">
 

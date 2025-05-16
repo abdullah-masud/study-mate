@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
+{% block title %}StudyMate - Login{% endblock %}
+
+{% block nav_links %}
+
+<a href="{{ url_for('home.home') }}" class="btn btn-outline-light mr-3">Home</a>
+{% endblock nav_links %}
+
+{% block nav_buttons %}
+
+{% endblock nav_buttons %}
+
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
