@@ -88,6 +88,9 @@ def get_summary():
         total_hours += s.hours
         subject_hours[s.subject] += s.hours
 
+    # round to one decimal place
+    total_hours = round(total_hours, 1)
+    
     most = max(subject_hours, key=subject_hours.get) if subject_hours else "-"
     least = min(subject_hours, key=subject_hours.get) if subject_hours else "-"
 
@@ -294,7 +297,8 @@ def get_shared_chart_data():
         bar_data[date_str][s.subject] += s.hours
         raw_data[date_str][s.subject]["hours"] += s.hours
 
-
+    # round to one decimal place
+    total_hours = round(total_hours, 1)
 
     dates = [(start_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
     subjects = list(subject_hours.keys())

@@ -86,7 +86,7 @@ async function fetchSummary(startDate = currentWeekStart) {
   try {
     const response = await fetch(`/api/get-summary?start=${startStr}&end=${endStr}`);
     const summary = await response.json();
-    document.getElementById("total-hours").textContent = summary.totalHours || 0;
+    document.getElementById("total-hours").textContent = Number(summary.totalHours || 0).toFixed(1);
     document.getElementById("most-subject").textContent = summary.mostStudied || "-";
     document.getElementById("least-subject").textContent = summary.leastStudied || "-";
   } catch (error) {
@@ -497,7 +497,7 @@ async function updateSharedViews(offset) {
 
   // ✅ Rendering summary cards
   const { totalHours, mostStudied, leastStudied } = data.summary;
-  document.getElementById("shared-total-hours").textContent = totalHours || 0;
+  document.getElementById("shared-total-hours").textContent = Number(totalHours || 0).toFixed(1);
   document.getElementById("shared-most-subject").textContent = mostStudied || "-";
   document.getElementById("shared-least-subject").textContent = leastStudied || "-";
 

@@ -56,7 +56,7 @@ pip install -r requirements.txt
 ### 4. initialising the database
 
 ```bash
-python main.py # or seed.py for initialising the database
+python main.py 
 ```
 
 ### 5. Run the Flask App
@@ -83,7 +83,7 @@ Follow these steps to properly set up and run the tests for StudyMate:
 
 StudyMate uses two different database environments:
 
-1. **Development/Demo Database**: Initialized through `seed.py`, contains test data
+1. **Development/Demo Database**: Initialized through `seed.py`, contains test data(This section is used for lecture presentations)
 2. **Test Database**: Separate in-memory database automatically created for tests, following testing best practices
 
 To set up the development/demo database, run:
