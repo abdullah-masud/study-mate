@@ -81,7 +81,12 @@ Follow these steps to properly set up and run the tests for StudyMate:
 
 ### 1. Database Setup
 
-Since the submitted code does not include a pre-populated database, you need to initialize it:
+StudyMate uses two different database environments:
+
+1. **Development/Demo Database**: Initialized through `seed.py`, contains test data
+2. **Test Database**: Separate in-memory database automatically created for tests, following testing best practices
+
+To set up the development/demo database, run:
 
 ```bash
 # Activate your virtual environment first
@@ -89,10 +94,11 @@ python seed.py
 ```
 
 This script will:
-
-- Create the necessary database tables
+- Drop and recreate all database tables
 - Add a test user (Email: test@example.com, Password: Testpassword123！)
-- Add sample study sessions to demonstrate app functionality
+- Add sample study sessions for demonstration
+
+**Note**: Automated tests use their own independent test database and do not rely on this script. This script is mainly for manual testing and demonstrations.
 
 ### 2. Running Unit Tests
 
@@ -102,23 +108,27 @@ Unit tests verify the core functionality of the application:
 python -m pytest tests/test_unit.py -v
 ```
 
-These tests check the API endpoints, database models, and basic application logic.
+These tests will:
+- Automatically create an independent in-memory test database (`sqlite:///:memory:`)
+- Check API endpoints, database models, and application logic
+- Automatically create users and data needed for testing
+- Include 6+ unit tests
 
 ### 3. Running Selenium Tests
 
-Selenium tests require the application to be running first:
-
-#### Terminal 1: Start the Flask application
-
-```bash
-python main.py
-```
-
-#### Terminal 2: Run the Selenium tests
+Selenium tests now automatically start and stop the Flask application:
 
 ```bash
 python -m tests.test_selenium
 ```
+
+The improved tests will:
+- Automatically create an independent test database environment
+- Start the Flask application in test mode
+- Run all Selenium tests
+- Automatically shut down the server when complete
+
+**Important**: These tests are completely independent from the main application database, using a dedicated test database, fulfilling the "Tests use test database" requirement.
 
 **Note:** Selenium tests require Chrome browser. The tests use webdriver-manager to automatically download the appropriate ChromeDriver version. If you encounter issues, ensure you have Chrome installed and that webdriver-manager is installed via:
 
@@ -129,7 +139,7 @@ pip install webdriver-manager
 ### 4. Troubleshooting
 
 - **Database errors**: If you encounter database errors, try deleting the `instance/studymate_database.db` file and run `python seed.py` again.
-- **Selenium test failures**: Ensure the Flask application is running on port 5000 before starting the tests.
+- **Selenium test failures**: If tests fail with element not found errors, you may need to increase the wait times in the test code.
 - **Browser issues**: If the tests can't launch Chrome, try running in non-headless mode by editing `tests/test_selenium.py` and removing the `--headless` option.
 
 ---

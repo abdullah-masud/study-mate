@@ -202,7 +202,7 @@ def share_record():
     # Check if it has been shared to this email address
     existing = ShareRecord.query.filter_by(sender_id=sender_id, recipient_id=recipient.id).first()
     if existing:
-        return jsonify({"error": "You’ve already shared with this user. Please update or delete the existing record."}), 400
+        return jsonify({"error": "You've already shared with this user. Please update or delete the existing record."}), 400
 
     # Otherwise add a new record
     record = ShareRecord(
@@ -370,6 +370,36 @@ def update_share(share_id):
     record.share_pie = data.get("share_pie", record.share_pie)
     db.session.commit()
     return jsonify({"message": "Share record updated"})
+
+# ========== Search Senders ==========
+@dashboard_api.route('/api/search-senders', methods=['GET'])
+def search_senders():
+    search_term = request.args.get('term', '')
+    current_user_id = session.get('id')
+    
+    if not search_term:
+        return jsonify([])
+    
+    # Find users who have shared data with the current user
+    shares = ShareRecord.query.filter_by(recipient_id=current_user_id).all()
+    sender_ids = [share.sender_id for share in shares]
+    
+    # Search among these senders
+    senders = Student.query.filter(
+        Student.id.in_(sender_ids),
+        Student.username.ilike(f'%{search_term}%') | Student.email.ilike(f'%{search_term}%')
+    ).all()
+    
+    results = [
+        {
+            'id': sender.id,
+            'username': sender.username,
+            'email': sender.email
+        }
+        for sender in senders
+    ]
+    
+    return jsonify(results)
 
 
 
