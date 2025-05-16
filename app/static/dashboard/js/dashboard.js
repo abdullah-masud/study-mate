@@ -789,33 +789,298 @@ function saveTodos() {
 }
 
 document.getElementById("export-pdf-btn").addEventListener("click", async () => {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  const summaryText = `
-    🧠 Study Summary (Week of ${document.getElementById("week-label").textContent}):
-    Total Hours: ${document.getElementById("total-hours").textContent}
-    Most Studied: ${document.getElementById("most-subject").textContent}
-    Least Studied: ${document.getElementById("least-subject").textContent}
-  `;
-
-  // Add summary text
-  pdf.setFontSize(12);
-  pdf.text(summaryText, 10, 20);
-
-  // Capture bar chart
-  const barCanvas = document.getElementById("productivity-chart");
-  const barImage = await html2canvas(barCanvas);
-  const barData = barImage.toDataURL("image/png");
-  pdf.addImage(barData, "PNG", 10, 40, 180, 70);
-
-  // Capture pie chart
-  const pieCanvas = document.getElementById("weekly-pie-chart");
-  const pieImage = await html2canvas(pieCanvas);
-  const pieData = pieImage.toDataURL("image/png");
-  pdf.addImage(pieData, "PNG", 10, 120, 180, 70);
-
-  pdf.save("StudyMate_Summary.pdf");
+  try {
+    // Show loading indicator
+    const exportBtn = document.getElementById("export-pdf-btn");
+    const originalBtnText = exportBtn.innerHTML;
+    exportBtn.innerHTML = "Exporting...";
+    exportBtn.disabled = true;
+    
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "mm", "a4");
+    
+    // Get user information
+    const username = document.querySelector("h2.mb-4 strong")?.textContent || "User";
+    
+    // Get proper date format from the week label
+    const weekLabel = document.getElementById("week-label").textContent;
+    
+    // Add report header with user name
+    pdf.setFillColor(33, 37, 41);
+    pdf.rect(0, 0, pdf.internal.pageSize.width, 25, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(18);
+    pdf.text("StudyMate - Weekly Summary", 105, 15, { align: 'center' });
+    
+    // Add user info section
+    pdf.setFillColor(240, 240, 240);
+    pdf.rect(0, 25, pdf.internal.pageSize.width, 10, 'F');
+    
+    pdf.setTextColor(33, 37, 41);
+    pdf.setFontSize(12);
+    pdf.text(`Report for: ${username}`, 10, 32);
+    
+    // Add summary text
+    pdf.setFontSize(12);
+    pdf.setTextColor(33, 37, 41);
+    const totalHours = document.getElementById("total-hours").textContent;
+    const mostSubject = document.getElementById("most-subject").textContent;
+    const leastSubject = document.getElementById("least-subject").textContent;
+    
+    pdf.text("Week Period: " + weekLabel, 10, 45);
+    pdf.text("Total Hours: " + totalHours, 10, 52);
+    pdf.text("Most Studied Subject: " + mostSubject, 10, 59);
+    pdf.text("Least Studied Subject: " + leastSubject, 10, 66);
+    
+    // Add separator line
+    pdf.setDrawColor(220, 220, 220);
+    pdf.line(10, 70, 200, 70);
+    
+    // Clone and prepare bar chart for export
+    await prepareBarChartForExport();
+    
+    // Capture bar chart with better quality
+    const barContainer = document.getElementById("export-bar-container");
+    const barCanvas = barContainer.querySelector("canvas");
+    
+    const barImage = await html2canvas(barCanvas, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false,
+      useCORS: true
+    });
+    
+    // Add Bar Chart title
+    pdf.setFontSize(14);
+    pdf.text("Productivity by Day", 105, 75, { align: 'center' });
+    
+    const barData = barImage.toDataURL("image/png");
+    pdf.addImage(barData, "PNG", 15, 80, 180, 70);
+    
+    // Clone and prepare pie chart for export
+    await preparePieChartForExport();
+    
+    // Add separator line
+    pdf.line(10, 155, 200, 155);
+    
+    // Add Pie Chart title
+    pdf.text("Subject Distribution", 105, 160, { align: 'center' });
+    
+    // Capture pie chart with better quality and maintain aspect ratio
+    const pieContainer = document.getElementById("export-pie-container");
+    const pieCanvas = pieContainer.querySelector("canvas");
+    
+    const pieImage = await html2canvas(pieCanvas, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false,
+      useCORS: true
+    });
+    
+    const pieData = pieImage.toDataURL("image/png");
+    
+    // Calculate dimensions to maintain aspect ratio (1:1 for a circle)
+    const pieWidth = 120; // Reduced width for better circular appearance
+    const pieHeight = 120; // Equal to width to maintain aspect ratio
+    const pieX = 50; // Center it horizontally
+    
+    pdf.addImage(pieData, "PNG", pieX, 165, pieWidth, pieHeight);
+    
+    // Add footer with date and user info
+    pdf.setFillColor(240, 240, 240);
+    pdf.rect(0, 275, pdf.internal.pageSize.width, 22, 'F');
+    
+    pdf.setFontSize(10);
+    pdf.setTextColor(100, 100, 100);
+    const exportDate = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+    pdf.text(`Generated for: ${username}`, 10, 280);
+    pdf.text(`Generated on: ${exportDate}`, 10, 285);
+    
+    // Add page number
+    pdf.text("Page 1 of 1", 195, 285, { align: 'right' });
+    
+    // Add website info
+    pdf.setFontSize(8);
+    pdf.text("StudyMate.com - Track your learning progress", 105, 292, { align: 'center' });
+    
+    // Save with formatted date and username in the filename
+    const sanitizedUsername = username.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const fileName = `StudyMate_${sanitizedUsername}_${weekLabel.replace(/\s/g, '').replace(/~/g, '-')}.pdf`;
+    pdf.save(fileName);
+    
+    // Clean up temporary containers
+    document.getElementById("export-bar-container")?.remove();
+    document.getElementById("export-pie-container")?.remove();
+    
+    // Restore button state
+    exportBtn.innerHTML = originalBtnText;
+    exportBtn.disabled = false;
+    
+  } catch (error) {
+    console.error("Error exporting PDF:", error);
+    alert("Failed to export PDF. Please try again.");
+    
+    // Make sure button is restored even on error
+    const exportBtn = document.getElementById("export-pdf-btn");
+    exportBtn.innerHTML = "📄 Export Summary as PDF";
+    exportBtn.disabled = false;
+    
+    // Clean up on error
+    document.getElementById("export-bar-container")?.remove();
+    document.getElementById("export-pie-container")?.remove();
+  }
 });
+
+// Function to prepare bar chart for export with better formatting
+async function prepareBarChartForExport() {
+  // Create a temporary container for the export chart
+  const tempContainer = document.createElement("div");
+  tempContainer.id = "export-bar-container";
+  tempContainer.style.position = "absolute";
+  tempContainer.style.left = "-9999px";
+  tempContainer.style.width = "800px";
+  tempContainer.style.height = "400px";
+  tempContainer.style.backgroundColor = "#ffffff";
+  document.body.appendChild(tempContainer);
+  
+  // Create a canvas in the container
+  const canvas = document.createElement("canvas");
+  tempContainer.appendChild(canvas);
+  
+  // Get the original chart data
+  const originalChart = chartInstance;
+  if (!originalChart) return;
+  
+  // Create a clone of the chart with export-optimized options
+  const ctx = canvas.getContext("2d");
+  const exportChart = new Chart(ctx, {
+    type: "bar",
+    data: JSON.parse(JSON.stringify(originalChart.data)), // Deep clone data
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: false,
+      plugins: {
+        legend: {
+          position: "top",
+          labels: {
+            font: { size: 14, weight: 'bold' },
+            padding: 20
+          }
+        },
+        tooltip: { enabled: false }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: {
+            font: { size: 12 },
+            maxRotation: 45,
+            minRotation: 45
+          },
+          grid: {
+            display: true,
+            color: "#f0f0f0"
+          }
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Hours Studied",
+            font: { size: 14, weight: 'bold' }
+          },
+          ticks: {
+            font: { size: 12 }
+          },
+          grid: {
+            display: true,
+            color: "#f0f0f0"
+          }
+        }
+      }
+    }
+  });
+  
+  // Wait for chart to render
+  await new Promise(resolve => setTimeout(resolve, 200));
+  return exportChart;
+}
+
+// Function to prepare pie chart for export with better formatting
+async function preparePieChartForExport() {
+  // Create a temporary container for the export chart
+  const tempContainer = document.createElement("div");
+  tempContainer.id = "export-pie-container";
+  tempContainer.style.position = "absolute";
+  tempContainer.style.left = "-9999px";
+  tempContainer.style.width = "600px";  // Make width and height equal
+  tempContainer.style.height = "600px";  // Make width and height equal
+  tempContainer.style.backgroundColor = "#ffffff";
+  document.body.appendChild(tempContainer);
+  
+  // Create a canvas in the container with square dimensions
+  const canvas = document.createElement("canvas");
+  canvas.width = 600;  // Set explicit width
+  canvas.height = 600; // Set explicit height
+  tempContainer.appendChild(canvas);
+  
+  // Get the original chart data
+  const originalChart = pieChartInstance;
+  if (!originalChart) return;
+  
+  // Create a clone of the chart with export-optimized options
+  const ctx = canvas.getContext("2d");
+  const exportChart = new Chart(ctx, {
+    type: "pie",
+    data: JSON.parse(JSON.stringify(originalChart.data)), // Deep clone data
+    options: {
+      responsive: false,  // Disable responsive to maintain aspect ratio
+      maintainAspectRatio: true,
+      animation: false,
+      layout: {
+        padding: {
+          top: 50,    // Add padding to ensure the chart is centered
+          bottom: 50, 
+          left: 50,
+          right: 50
+        }
+      },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            font: { size: 14, weight: 'bold' },
+            padding: 20,
+            boxWidth: 40,
+            generateLabels: function(chart) {
+              const data = chart.data;
+              if (data.labels.length && data.datasets.length) {
+                return data.labels.map((label, i) => {
+                  const dataset = data.datasets[0];
+                  const value = dataset.data[i];
+                  return {
+                    text: `${label}: ${value} hrs`,
+                    fillStyle: dataset.backgroundColor[i],
+                    hidden: false,
+                    index: i
+                  };
+                });
+              }
+              return [];
+            }
+          }
+        },
+        tooltip: { enabled: false }
+      }
+    }
+  });
+  
+  // Wait for chart to render
+  await new Promise(resolve => setTimeout(resolve, 300));
+  return exportChart;
+}
 
 
